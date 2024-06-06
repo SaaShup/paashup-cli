@@ -7,6 +7,7 @@ import (
     "net/http"
     "encoding/json"
     "bytes"
+    "strings"
     "github.com/urfave/cli/v2"
 )
 
@@ -20,7 +21,8 @@ func searchContainer(c *cli.Context, h HostComplete, containerName string) (Cont
 }
 
 func operationContainer(c *cli.Context, operation string) (Container, error) {
-     client := &http.Client{}
+    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
+    client := &http.Client{}
 
     host, err := searchHost(c)
     if err != nil {
@@ -33,8 +35,8 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
         return Container{}, fmt.Errorf("Container not found")
     }
 
-    var url = c.String("netbox-url") + "/api/plugins/docker/containers/" + fmt.Sprint(container.Id) + "/"
-    var jsonStr = []byte(`{"operation":"` + operation + `"}`)
+    var url = fmt.Sprintf("%s/api/plugins/docker/containers/%d/", netboxUrl, container.Id)
+    var jsonStr = []byte(fmt.Sprintf(`{"operation":"%s"}`, operation))
     req, err := http.NewRequest("PATCH", url, ioutil.NopCloser(bytes.NewBuffer(jsonStr)))
 
     if err != nil {
@@ -42,7 +44,7 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
     }
     req.ContentLength = int64(len(jsonStr))
     req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", "Token " + c.String("netbox-token"))
+    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
     res, err := client.Do(req)
     if err != nil {
         log.Fatal(err)
@@ -90,6 +92,7 @@ func startContainer(c *cli.Context) error {
 }
 
 func getLogs(c *cli.Context) error {
+    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
     client := &http.Client{}
 
     host, err := searchHost(c)
@@ -104,14 +107,14 @@ func getLogs(c *cli.Context) error {
         return nil
     }
 
-    var url = c.String("netbox-url") + "/api/plugins/docker/containers/" + fmt.Sprint(container.Id) + "/logs/"
+    var url = fmt.Sprintf("%s/api/plugins/docker/containers/%d/logs/", netboxUrl, container.Id)
     req, err := http.NewRequest("GET", url, nil)
     if err != nil {
         log.Fatal(err)
     }
 
     req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", "Token " + c.String("netbox-token"))
+    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
     res, err := client.Do(req)
     if err != nil {
         log.Fatal(err)
@@ -127,27 +130,28 @@ func getLogs(c *cli.Context) error {
 }
 
 func listContainers(c *cli.Context) error {
+    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
     client := &http.Client{}
 
     var url string
     if c.String("host") == "" {
-        url = "/api/plugins/docker/containers/"
+        url = fmt.Sprintf("%s/api/plugins/docker/containers/", netboxUrl)
     } else {
         var host, err = searchHost(c)
         if err != nil {
             fmt.Println("Host not found")
             return nil
         }
-        url = "/api/plugins/docker/containers/?host_id=" + fmt.Sprint(host.Id)
+        url = fmt.Sprintf("%s/api/plugins/docker/containers/?host_id=%d", netboxUrl, host.Id)
     }
 
-    req, err := http.NewRequest("GET", c.String("netbox-url") + url, nil)
+    req, err := http.NewRequest("GET", url, nil)
     if err != nil {
         log.Fatal(err)
     }
 
     req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", "Token " + c.String("netbox-token"))
+    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
     res, err := client.Do(req)
     if err != nil {
         log.Fatal(err)

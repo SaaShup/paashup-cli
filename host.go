@@ -6,13 +6,15 @@ import (
     "io/ioutil"
     "net/http"
     "encoding/json"
+    "strings"
     "github.com/urfave/cli/v2"
 )
 
 func listHosts(c *cli.Context) error {
+    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
     client := &http.Client{}
 
-    var url = c.String("netbox-url") + "/api/plugins/docker/hosts/"
+    url := fmt.Sprintf("%s/api/plugins/docker/hosts/", netboxUrl)
 
     req, err := http.NewRequest("GET", url, nil)
     if err != nil {
@@ -20,7 +22,7 @@ func listHosts(c *cli.Context) error {
     }
 
     req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", "Token " + c.String("netbox-token"))
+    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
     res, err := client.Do(req)
     if err != nil {
         log.Fatal(err)
@@ -43,19 +45,21 @@ func listHosts(c *cli.Context) error {
 }
 
 func searchHost(c *cli.Context) (HostComplete, error) {
+    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
     client := &http.Client{}
 
     if c.String("host") == "" {
         return HostComplete{}, fmt.Errorf("Host not found")
     }
-    var url = c.String("netbox-url") + "/api/plugins/docker/hosts/?name=" + c.String("host")
+
+    url := fmt.Sprintf("%s/api/plugins/docker/hosts/?name=%s", netboxUrl, c.String("host"))
     req, err := http.NewRequest("GET", url, nil)
     if err != nil {
         log.Fatal(err)
     }
 
     req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", "Token " + c.String("netbox-token"))
+    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
     res, err := client.Do(req)
     if err != nil {
         log.Fatal(err)
