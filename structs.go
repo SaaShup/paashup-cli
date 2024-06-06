@@ -1,5 +1,9 @@
 package main
 
+type Exec struct {
+    Stdout string `json:"stdout"`
+}
+
 type Host struct {
     Id int `json:"id"`
     Url string `json:"url"`

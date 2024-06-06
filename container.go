@@ -63,6 +63,54 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
     return result, nil
 }
 
+type command struct {
+    Cmd []string `json:"cmd"`
+}
+
+func execContainer(c *cli.Context) error {
+    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
+    client := &http.Client{}
+
+    host, err := searchHost(c)
+    if err != nil {
+        fmt.Println("Host not found")
+        return nil
+    }
+
+    container, err := searchContainer(c, host, c.Args().Get(c.Args().Len()-2))
+    if err != nil {
+        fmt.Println("Container not found")
+        return nil
+    }
+
+    var url = fmt.Sprintf("%s/api/plugins/docker/containers/%d/exec/", netboxUrl, container.Id)
+    command := &command{Cmd: strings.Fields(c.Args().Get(c.Args().Len()-1))}
+    jsonStr, _ := json.Marshal(command)
+
+    req, err := http.NewRequest("POST", url, ioutil.NopCloser(bytes.NewBuffer(jsonStr)))
+    req.ContentLength = int64(len(jsonStr))
+    req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
+
+    res, err := client.Do(req)
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    defer res.Body.Close()
+    var result Exec
+    b, err := ioutil.ReadAll(res.Body)
+
+    if err := json.Unmarshal(b, &result); err != nil { 
+        fmt.Println("Can not unmarshal JSON")
+    }
+
+    fmt.Println(result.Stdout)
+
+    return nil
+
+}
+
 func stopContainer(c *cli.Context) error {
     container, err := operationContainer(c, "stop")
     if err != nil {

@@ -56,6 +56,11 @@ func main() {
                         Usage: "Stop a container",
                         Action: stopContainer,
                     },
+                    {
+                        Name: "exec",
+                        Usage: "Execute a command in a container",
+                        Action: execContainer,
+                    },
                 },
             },
             {
