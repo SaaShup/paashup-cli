@@ -50,11 +50,26 @@ func main() {
                         Name: "start",
                         Usage: "Start a container",
                         Action: startContainer,
+                        Flags: []cli.Flag{
+                            &cli.BoolFlag{
+                                Name:    "wait",
+                                Aliases: []string{"w"},
+                                Usage:   "Wait for container to start",
+                            },
+                        },
                     },
                     {
                         Name: "stop",
                         Usage: "Stop a container",
                         Action: stopContainer,
+                        Flags: []cli.Flag{
+                            &cli.BoolFlag{
+                                Name:    "wait",
+                                Aliases: []string{"w"},
+                                Usage:   "Wait for container to start",
+                            },
+                        },
+
                     },
                     {
                         Name: "exec",

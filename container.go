@@ -5,6 +5,7 @@ import (
     "log"
     "encoding/json"
     "strings"
+    "time"
     "github.com/urfave/cli/v2"
 )
 
@@ -17,6 +18,10 @@ func searchContainer(c *cli.Context, h HostComplete, containerName string) (Cont
     return Container{}, fmt.Errorf("Container not found")
 }
 
+type operationType struct {
+    Operation string `json:"operation"`
+}
+
 func operationContainer(c *cli.Context, operation string) (Container, error) {
 
     host, err := searchHost(c)
@@ -26,14 +31,14 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
 
     container, err := searchContainer(c, host, c.Args().Get(c.Args().Len()-1))
     if err != nil {
-        fmt.Println("Container not found")
         return Container{}, fmt.Errorf("Container not found")
     }
 
     url := fmt.Sprintf("containers/%d/", container.Id)
-    var jsonStr = []byte(fmt.Sprintf(`{"operation":"%s"}`, operation))
+    operationS := &operationType{Operation: operation}
+    jsonStr, _ := json.Marshal(operationS)
 
-    resultCall, err := netboxCall(c, url, "POST", jsonStr)
+    resultCall, err := netboxCall(c, url, "PATCH", jsonStr)
 
     if err != nil {
         log.Fatal(err)
@@ -45,7 +50,38 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
         fmt.Println("Can not unmarshal JSON")
     }
 
-    return result, nil
+    if result.Operation == operation && c.Bool("wait") {
+        i := 0
+        for i < 20 {
+            var resultFor Container
+            resultCall, err = netboxCall(c, url, "GET", nil)
+            if err != nil {
+                log.Fatal(err)
+            }
+            if err := json.Unmarshal(resultCall, &resultFor); err != nil {  // Parse []byte to the go struct pointer
+                fmt.Println("Can not unmarshal JSON")
+            }
+            switch operation {
+                case "start":
+                    if resultFor.State == "running" {
+                        return result, nil
+                    }
+                case "stop":
+                    if resultFor.State == "exited" {
+                        return result, nil
+                    }
+            }
+            time.Sleep(1 * time.Second)
+            i++
+        }
+        return result, fmt.Errorf("Timeout")
+
+    } else if result.Operation == operation {
+        return result, nil
+    } else {
+        return result, fmt.Errorf("Operation not executed")
+    }
+    
 }
 
 type command struct {
@@ -92,28 +128,20 @@ func execContainer(c *cli.Context) error {
 func stopContainer(c *cli.Context) error {
     container, err := operationContainer(c, "stop")
     if err != nil {
-        fmt.Println("Container not found")
+        fmt.Println(err)
         return nil
     }
-    if container.Operation == "stop" {
-        fmt.Println("Container " + container.Name + " stopped")
-    } else {
-        fmt.Println("Container " + container.Name + " not stopped")
-    }
+    fmt.Println("Container " + container.Name + " stopped")
     return nil
 }
 
 func startContainer(c *cli.Context) error {
     container, err := operationContainer(c, "start")
     if err != nil {
-        fmt.Println("Container not found")
+        fmt.Println(err)
         return nil
     }
-    if container.Operation == "start" {
-        fmt.Println("Container " + container.Name + " started")
-    } else {
-        fmt.Println("Container " + container.Name + " not started")
-    }
+    fmt.Println("Container " + container.Name + " started")
     return nil
 }
 
