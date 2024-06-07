@@ -3,37 +3,21 @@ package main
 import (
     "fmt"
     "log"
-    "io/ioutil"
-    "net/http"
     "encoding/json"
-    "strings"
     "github.com/urfave/cli/v2"
 )
 
 func listHosts(c *cli.Context) error {
-    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
-    client := &http.Client{}
+    url := "hosts/"
 
-    url := fmt.Sprintf("%s/api/plugins/docker/hosts/", netboxUrl)
-
-    req, err := http.NewRequest("GET", url, nil)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
-    res, err := client.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    defer res.Body.Close()
     var result HostList
+    resultCall, err := netboxCall(c, url, "GET", nil)
 
-    b, err := ioutil.ReadAll(res.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
 
-    if err := json.Unmarshal(b, &result); err != nil {  // Parse []byte to the go struct pointer
+    if err := json.Unmarshal(resultCall, &result); err != nil {  // Parse []byte to the go struct pointer
         fmt.Println("Can not unmarshal JSON")
     }
 
@@ -45,32 +29,21 @@ func listHosts(c *cli.Context) error {
 }
 
 func searchHost(c *cli.Context) (HostComplete, error) {
-    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
-    client := &http.Client{}
 
     if c.String("host") == "" {
         return HostComplete{}, fmt.Errorf("Host not found")
     }
 
-    url := fmt.Sprintf("%s/api/plugins/docker/hosts/?name=%s", netboxUrl, c.String("host"))
-    req, err := http.NewRequest("GET", url, nil)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
-    res, err := client.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    defer res.Body.Close()
+    url := fmt.Sprintf("hosts/?name=%s", c.String("host"))
     var result HostList
+    resultCall, err := netboxCall(c, url, "GET", nil)
 
-    b, err := ioutil.ReadAll(res.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
 
-    if err := json.Unmarshal(b, &result); err != nil {  // Parse []byte to the go struct pointer
+
+    if err := json.Unmarshal(resultCall, &result); err != nil {  // Parse []byte to the go struct pointer
         fmt.Println("Can not unmarshal JSON")
     }
 

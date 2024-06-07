@@ -3,10 +3,7 @@ package main
 import (
     "fmt"
     "log"
-    "io/ioutil"
-    "net/http"
     "encoding/json"
-    "bytes"
     "strings"
     "github.com/urfave/cli/v2"
 )
@@ -21,8 +18,6 @@ func searchContainer(c *cli.Context, h HostComplete, containerName string) (Cont
 }
 
 func operationContainer(c *cli.Context, operation string) (Container, error) {
-    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
-    client := &http.Client{}
 
     host, err := searchHost(c)
     if err != nil {
@@ -35,28 +30,18 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
         return Container{}, fmt.Errorf("Container not found")
     }
 
-    var url = fmt.Sprintf("%s/api/plugins/docker/containers/%d/", netboxUrl, container.Id)
+    url := fmt.Sprintf("containers/%d/", container.Id)
     var jsonStr = []byte(fmt.Sprintf(`{"operation":"%s"}`, operation))
-    req, err := http.NewRequest("PATCH", url, ioutil.NopCloser(bytes.NewBuffer(jsonStr)))
+
+    resultCall, err := netboxCall(c, url, "POST", jsonStr)
 
     if err != nil {
         log.Fatal(err)
     }
-    req.ContentLength = int64(len(jsonStr))
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
-    res, err := client.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    defer res.Body.Close()
 
     var result Container
 
-    b, err := ioutil.ReadAll(res.Body)
-
-    if err := json.Unmarshal(b, &result); err != nil {  // Parse []byte to the go struct pointer
+    if err := json.Unmarshal(resultCall, &result); err != nil {  // Parse []byte to the go struct pointer
         fmt.Println("Can not unmarshal JSON")
     }
 
@@ -68,8 +53,6 @@ type command struct {
 }
 
 func execContainer(c *cli.Context) error {
-    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
-    client := &http.Client{}
 
     host, err := searchHost(c)
     if err != nil {
@@ -83,25 +66,20 @@ func execContainer(c *cli.Context) error {
         return nil
     }
 
-    var url = fmt.Sprintf("%s/api/plugins/docker/containers/%d/exec/", netboxUrl, container.Id)
+    url := fmt.Sprintf("containers/%d/exec/", container.Id)
     command := &command{Cmd: strings.Fields(c.Args().Get(c.Args().Len()-1))}
     jsonStr, _ := json.Marshal(command)
 
-    req, err := http.NewRequest("POST", url, ioutil.NopCloser(bytes.NewBuffer(jsonStr)))
-    req.ContentLength = int64(len(jsonStr))
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
 
-    res, err := client.Do(req)
+    resultCall, err := netboxCall(c, url, "POST", jsonStr)
+
     if err != nil {
         log.Fatal(err)
     }
-    
-    defer res.Body.Close()
-    var result Exec
-    b, err := ioutil.ReadAll(res.Body)
 
-    if err := json.Unmarshal(b, &result); err != nil { 
+    var result Exec
+
+    if err := json.Unmarshal(resultCall, &result); err != nil { 
         fmt.Println("Can not unmarshal JSON")
     }
 
@@ -140,8 +118,6 @@ func startContainer(c *cli.Context) error {
 }
 
 func getLogs(c *cli.Context) error {
-    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
-    client := &http.Client{}
 
     host, err := searchHost(c)
     if err != nil {
@@ -155,62 +131,41 @@ func getLogs(c *cli.Context) error {
         return nil
     }
 
-    var url = fmt.Sprintf("%s/api/plugins/docker/containers/%d/logs/", netboxUrl, container.Id)
-    req, err := http.NewRequest("GET", url, nil)
+    url := fmt.Sprintf("containers/%d/logs/", container.Id)
+    resultCall, err := netboxCall(c, url, "GET", nil)
+
     if err != nil {
         log.Fatal(err)
     }
 
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
-    res, err := client.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    defer res.Body.Close()
 
-    b, err := ioutil.ReadAll(res.Body)
-
-    fmt.Printf("%s\n", b)
+    fmt.Printf("%s\n", resultCall)
 
     return nil
 }
 
 func listContainers(c *cli.Context) error {
-    netboxUrl := strings.TrimRight(c.String("netbox-url"), "/")
-    client := &http.Client{}
 
     var url string
     if c.String("host") == "" {
-        url = fmt.Sprintf("%s/api/plugins/docker/containers/", netboxUrl)
+        url = fmt.Sprintf("containers/")
     } else {
         var host, err = searchHost(c)
         if err != nil {
             fmt.Println("Host not found")
             return nil
         }
-        url = fmt.Sprintf("%s/api/plugins/docker/containers/?host_id=%d", netboxUrl, host.Id)
+        url = fmt.Sprintf("containers/?host_id=%d", host.Id)
     }
+    resultCall, err := netboxCall(c, url, "GET", nil)
 
-    req, err := http.NewRequest("GET", url, nil)
     if err != nil {
         log.Fatal(err)
     }
 
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", fmt.Sprintf("Token %s", c.String("netbox-token")))
-    res, err := client.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    defer res.Body.Close()
     var result ContainerList
 
-    b, err := ioutil.ReadAll(res.Body)
-
-    if err := json.Unmarshal(b, &result); err != nil {  // Parse []byte to the go struct pointer
+    if err := json.Unmarshal(resultCall, &result); err != nil {  // Parse []byte to the go struct pointer
         fmt.Println("Can not unmarshal JSON")
     }
 
