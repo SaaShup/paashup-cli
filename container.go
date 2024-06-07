@@ -50,7 +50,7 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
         fmt.Println("Can not unmarshal JSON")
     }
 
-    if result.Operation == operation && c.Bool("wait") {
+    if result.Operation == operation && !c.Bool("nowait") {
         i := 0
         for i < 20 {
             var resultFor Container

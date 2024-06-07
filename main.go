@@ -52,7 +52,7 @@ func main() {
                         Action: startContainer,
                         Flags: []cli.Flag{
                             &cli.BoolFlag{
-                                Name:    "wait",
+                                Name:    "nowait",
                                 Aliases: []string{"w"},
                                 Usage:   "Wait for container to start",
                             },
@@ -64,7 +64,7 @@ func main() {
                         Action: stopContainer,
                         Flags: []cli.Flag{
                             &cli.BoolFlag{
-                                Name:    "wait",
+                                Name:    "nowait",
                                 Aliases: []string{"w"},
                                 Usage:   "Wait for container to start",
                             },
