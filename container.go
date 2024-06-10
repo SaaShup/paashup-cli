@@ -4,6 +4,7 @@ import (
     "fmt"
     "log"
     "encoding/json"
+    "github.com/goccy/go-yaml"
     "strings"
     "time"
     "github.com/urfave/cli/v2"
@@ -86,6 +87,53 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
 
 type command struct {
     Cmd []string `json:"cmd"`
+}
+
+func inspectContainer(c *cli.Context) error {
+    
+        host, err := searchHost(c)
+        if err != nil {
+            fmt.Println("Host not found")
+            return nil
+        }
+    
+        container, err := searchContainer(c, host, c.Args().Get(c.Args().Len()-1))
+        if err != nil {
+            fmt.Println("Container not found")
+            return nil
+        }
+    
+        url := fmt.Sprintf("containers/%d/", container.Id)
+        resultCall, err := netboxCall(c, url, "GET", nil)
+    
+        if err != nil {
+            log.Fatal(err)
+        }
+        
+        var result ContainerComplete
+        if err := json.Unmarshal(resultCall, &result); err != nil {  // Parse []byte to the go struct pointer
+            fmt.Println("Can not unmarshal JSON")
+        }
+        switch c.String("format"){
+            case "json":
+                resp, err := json.Marshal(result)
+                if err == nil {
+                    fmt.Printf("%s\n", resp)
+                }
+            case "yaml":
+                resp, err := yaml.Marshal(result)
+                if err == nil {
+                    fmt.Printf("%s\n", resp)
+                }
+            default:
+                resp, err := json.Marshal(result)
+                if err == nil {
+                    fmt.Printf("%s\n", resp)
+                }
+        }
+    
+        return nil
+    
 }
 
 func execContainer(c *cli.Context) error {

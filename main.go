@@ -72,6 +72,20 @@ func main() {
 
                     },
                     {
+                        Name: "inspect",
+                        Usage: "inspect a container",
+                        Action: inspectContainer,
+                        Flags: []cli.Flag{
+                            &cli.StringFlag{
+                                Name:    "format",
+                                DefaultText: "json",
+                                Aliases: []string{"f"},
+                                Usage:   "choose between yaml, json Default: json",
+                            },
+                        },
+
+                    },
+                    {
                         Name: "exec",
                         Usage: "Execute a command in a container",
                         Action: execContainer,
