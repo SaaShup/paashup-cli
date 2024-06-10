@@ -1,231 +1,35 @@
-name: build-release
+name: build_and_release
 
 on:
   push:
     tags:
       - '*'
 
+permissions:
+  contents: write
+
 jobs:
-  release-linux-386:
+  goreleaser:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
     steps:
-      - name: checkout@scm
-        uses: actions/checkout@main
-
-      - name: setup@go
-        uses: actions/setup-go@main
+      -
+        name: Checkout
+        uses: actions/checkout@v4
         with:
-          go-version: '1.22.x'
-
-      - name: build@go
-        run: go build .
+          fetch-depth: 0
+      -
+        name: Set up Go
+        uses: actions/setup-go@v5
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          # 'latest', 'nightly', or a semver
+          version: '~> v2'
+          args: release --clean
         env:
-          GOARCH: "386"
-          GOOS: linux
-
-      - name: publish@release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: paashup-cli
-          asset_name: paashup-cli-linux-386
-          tag: ${{ github.ref }}
-          overwrite: yes
-
-  release-linux-amd64:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@main
-
-      - name: setup@go
-        uses: actions/setup-go@main
-        with:
-          go-version: '1.22.x'
-
-      - name: build@go
-        run: go build .
-        env:
-          GOARCH: amd64
-          GOOS: linux
-
-      - name: publish@release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: paashup-cli
-          asset_name: paashup-cli-linux-amd64
-          tag: ${{ github.ref }}
-          overwrite: yes
-
-  release-linux-arm:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@main
-
-      - name: setup@go
-        uses: actions/setup-go@main
-        with:
-          go-version: '1.22.x'
-
-      - name: build@go
-        run: go build .
-        env:
-          GOARCH: "arm"
-          GOOS: linux
-
-      - name: publish@release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: paashup-cli
-          asset_name: paashup-cli-linux-arm
-          tag: ${{ github.ref }}
-          overwrite: yes
-
-  release-linux-arm64:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@main
-
-      - name: setup@go
-        uses: actions/setup-go@main
-        with:
-          go-version: '1.22.x'
-
-      - name: build@go
-        run: go build .
-        env:
-          GOARCH: arm64
-          GOOS: linux
-
-      - name: publish@release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: paashup-cli
-          asset_name: paashup-cli-linux-arm64
-          tag: ${{ github.ref }}
-          overwrite: yes
-
-  release-darwin-amd64:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@main
-
-      - name: setup@go
-        uses: actions/setup-go@main
-        with:
-          go-version: '1.22.x'
-
-      - name: build@go
-        run: go build .
-        env:
-          GOARCH: amd64
-          GOOS: darwin
-
-      - name: publish@release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: paashup-cli
-          asset_name: paashup-cli-darwin-amd64
-          tag: ${{ github.ref }}
-          overwrite: yes
-
-  release-darwin-arm:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@main
-
-      - name: setup@go
-        uses: actions/setup-go@main
-        with:
-          go-version: '1.22.x'
-
-      - name: build@go
-        run: go build .
-        env:
-          GOARCH: arm
-          GOOS: darwin
-
-      - name: publish@release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: paashup-cli
-          asset_name: paashup-cli-darwin-amd64
-          tag: ${{ github.ref }}
-          overwrite: yes
-
-  release-windows-386:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@main
-
-      - name: setup@go
-        uses: actions/setup-go@main
-        with:
-          go-version: '1.22.x'
-
-      - name: build@go
-        run: go build .
-        env:
-          GOARCH: "386"
-          GOOS: windows
-
-      - name: publish@release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: paashup-cli.exe
-          asset_name: paashup-cli-windows-386.exe
-          tag: ${{ github.ref }}
-          overwrite: yes
-
-  release-windows-amd64:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@main
-
-      - name: setup@go
-        uses: actions/setup-go@main
-        with:
-          go-version: '1.22.x'
-
-      - name: build@go
-        run: go build .
-        env:
-          GOARCH: amd64
-          GOOS: windows
-
-      - name: publish@release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: paashup-cli.exe
-          asset_name: paashup-cli-windows-amd64.exe
-          tag: ${{ github.ref }}
-          overwrite: yes
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
+          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
