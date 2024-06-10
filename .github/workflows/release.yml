@@ -8,7 +8,8 @@ on:
 jobs:
   release-linux-386:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     steps:
       - name: checkout@scm
         uses: actions/checkout@main
@@ -35,7 +36,8 @@ jobs:
 
   release-linux-amd64:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     steps:
       - name: checkout@scm
         uses: actions/checkout@main
@@ -62,7 +64,8 @@ jobs:
 
   release-linux-arm:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     steps:
       - name: checkout@scm
         uses: actions/checkout@main
@@ -89,7 +92,8 @@ jobs:
 
   release-linux-arm64:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     steps:
       - name: checkout@scm
         uses: actions/checkout@main
@@ -116,7 +120,8 @@ jobs:
 
   release-darwin-amd64:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     steps:
       - name: checkout@scm
         uses: actions/checkout@main
@@ -143,7 +148,8 @@ jobs:
 
   release-darwin-arm:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     steps:
       - name: checkout@scm
         uses: actions/checkout@main
@@ -170,7 +176,8 @@ jobs:
 
   release-windows-386:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     steps:
       - name: checkout@scm
         uses: actions/checkout@main
@@ -197,7 +204,8 @@ jobs:
 
   release-windows-amd64:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     steps:
       - name: checkout@scm
         uses: actions/checkout@main
