@@ -28,13 +28,13 @@ func listHosts(c *cli.Context) error {
     return nil
 }
 
-func searchHost(c *cli.Context) (HostComplete, error) {
+func searchHost(host string, c *cli.Context) (HostComplete, error) {
 
-    if c.String("host") == "" {
+    if host == "" {
         return HostComplete{}, fmt.Errorf("Host not found")
     }
 
-    url := fmt.Sprintf("hosts/?name=%s", c.String("host"))
+    url := fmt.Sprintf("hosts/?name=%s", host)
     var result HostList
     resultCall, err := netboxCall(c, url, "GET", nil)
 

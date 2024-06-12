@@ -7,132 +7,104 @@
 To install `paashup-cli`, ensure you have Go installed and run:
 
 ```bash
-go get github.com/yourusername/paashup-cli
+go get github.com/saashup/paashup-cli
 ```
 
 ## Usage
 
-`paashup-cli` provides several commands and flags to interact with your paashup environment.
-
 ### Global Flags
 
-- `--host, -H`: Host to connect to (can also be set using `HOST` environment variable).
-- `--netbox-url, -N`: Netbox URL (required, can also be set using `NETBOX_URL` environment variable).
-- `--netbox-token, -T`: Netbox Token (required, can also be set using `NETBOX_TOKEN` environment variable).
+- `--netbox-url, -N`: Netbox URL (Required, can be set via `NETBOX_URL` environment variable)
+- `--netbox-token, -T`: Netbox Token (Required, can be set via `NETBOX_TOKEN` environment variable)
+- `--format, -f`: Choose between `yaml` and `json` (Default: `json`)
 
 ### Commands
 
-#### Container
+#### Docker
 
-Manage containers with the following subcommands:
+The `docker` command allows you to manage Docker containers, hosts, and images. It has several subcommands:
 
-- `list`: List all containers. To list containers on a specific host, use the `--host` flag.
+##### Container
 
-  ```bash
-  paashup-cli container list [--host HOST]
+- **list**: List all containers, optionally for a specific host.
+  ```sh
+  paashup-cli docker container list
   ```
 
-- `logs`: Get logs of a container.
-
-  ```bash
-  paashup-cli container logs [CONTAINER_NAME]
+- **logs**: Get logs of a container.
+  ```sh
+  paashup-cli docker container logs <hostname> <containername>
   ```
 
-- `start`: Start a container.
+- **start**: Start a container. Optionally, wait for the container to start.
+  ```sh
+  paashup-cli docker container start [--nowait] <hostname> <containername>
+  ```
+  - `--nowait, -w`: Do not wait for the container to start.
 
-  ```bash
-  paashup-cli container start [CONTAINER_NAME] [--nowait, -w]
+- **stop**: Stop a container. Optionally, wait for the container to stop.
+  ```sh
+  paashup-cli docker container stop [--nowait] <hostname> <containername>
+  ```
+  - `--nowait, -w`: Do not wait for the container to stop.
+
+- **inspect**: Inspect a container.
+  ```sh
+  paashup-cli docker container inspect <hostname> <containername>
   ```
 
-- `stop`: Stop a container.
-
-  ```bash
-  paashup-cli container stop [CONTAINER_NAME] [--nowait, -w]
+- **exec**: Execute a command in a container.
+  ```sh
+  paashup-cli docker container exec <hostname> <containername> '<command>'
   ```
 
-- `exec`: Execute a command in a container.
+##### Host
 
-  ```bash
-  paashup-cli container exec [CONTAINER_NAME] [COMMAND]
+- **list**: List all Docker hosts.
+  ```sh
+  paashup-cli docker host list
   ```
 
-#### Host
+##### Image
 
-Manage hosts with the following subcommands:
-
-- `list`: List all hosts.
-
-  ```bash
-  paashup-cli host list
-  ```
-
-#### Image
-
-Manage images with the following subcommands:
-
-- `list`: List all images.
-
-  ```bash
-  paashup-cli image list
+- **list**: List all Docker images.
+  ```sh
+  paashup-cli docker image list
   ```
 
 ## Examples
 
-### List All Containers
+Here are a few examples of how to use `paashup-cli`:
 
-```bash
-paashup-cli container list
-```
+- List all containers:
+  ```sh
+  paashup-cli docker container list
+  ```
 
-### List Containers on a Specific Host
+- Get logs of a container:
+  ```sh
+  paashup-cli docker container logs myhostname mycontainer
+  ```
 
-```bash
-paashup-cli container list --host example.com
-```
+- Start a container and wait for it to start:
+  ```sh
+  paashup-cli docker container start myhostname mycontainer
+  ```
 
-### Get Logs of a Container
+- Stop a container without waiting:
+  ```sh
+  paashup-cli docker container stop --nowait myhostname mycontainer
+  ```
 
-```bash
-paashup-cli container logs my_container
-```
+- Inspect a container:
+  ```sh
+  paashup-cli docker container inspect myhostname mycontainer
+  ```
 
-### Start a Container
-
-```bash
-paashup-cli container start my_container --nowait
-```
-
-### Stop a Container
-
-```bash
-paashup-cli container stop my_container --nowait
-```
-
-### Execute a Command in a Container
-
-```bash
-paashup-cli container exec my_container ls -la
-```
-
-### List All Hosts
-
-```bash
-paashup-cli host list
-```
-
-### List All Images
-
-```bash
-paashup-cli image list
-```
-
-## Environment Variables
-
-You can set the following environment variables instead of using flags:
-
-- `HOST`: Host to connect to.
-- `NETBOX_URL`: Netbox URL.
-- `NETBOX_TOKEN`: Netbox Token.
+- Execute a command in a container:
+  ```sh
+  paashup-cli docker container exec myhostname mycontainer 'ls -la'
+  ```
 
 ## Contributing
 
@@ -140,4 +112,8 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.# paashup-cli
+`paashup-cli` is released under the MIT License. See `LICENSE` for more information.
+
+---
+
+This README provides a general overview of `paashup-cli` and how to use it. For more detailed documentation and examples, please refer to the official documentation.

@@ -25,7 +25,7 @@ type operationType struct {
 
 func operationContainer(c *cli.Context, operation string) (Container, error) {
 
-    host, err := searchHost(c)
+    host, err := searchHost(c.Args().First(), c)
     if err != nil {
         return Container{}, fmt.Errorf("Host not found")
     }
@@ -91,7 +91,7 @@ type command struct {
 
 func inspectContainer(c *cli.Context) error {
     
-        host, err := searchHost(c)
+        host, err := searchHost(c.Args().First(), c)
         if err != nil {
             fmt.Println("Host not found")
             return nil
@@ -138,7 +138,7 @@ func inspectContainer(c *cli.Context) error {
 
 func execContainer(c *cli.Context) error {
 
-    host, err := searchHost(c)
+    host, err := searchHost(c.Args().First(), c)
     if err != nil {
         fmt.Println("Host not found")
         return nil
@@ -195,7 +195,7 @@ func startContainer(c *cli.Context) error {
 
 func getLogs(c *cli.Context) error {
 
-    host, err := searchHost(c)
+    host, err := searchHost(c.Args().First(), c)
     if err != nil {
         fmt.Println("Host not found")
         return nil
@@ -222,11 +222,12 @@ func getLogs(c *cli.Context) error {
 
 func listContainers(c *cli.Context) error {
 
+    host := c.Args().First()
     var url string
-    if c.String("host") == "" {
+    if host == "" {
         url = fmt.Sprintf("containers/")
     } else {
-        var host, err = searchHost(c)
+        var host, err = searchHost(host, c)
         if err != nil {
             fmt.Println("Host not found")
             return nil
