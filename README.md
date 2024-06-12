@@ -112,7 +112,7 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 ## License
 
-`paashup-cli` is released under the MIT License. See `LICENSE` for more information.
+`paashup-cli` is released under the BSD 3 License. See `LICENSE` for more information.
 
 ---
 
