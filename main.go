@@ -87,6 +87,8 @@ func main() {
         Name:  "paashup-cli",
         Version: version,
         Usage: "Manage your paashup",
+        EnableBashCompletion: true,
+        Suggest: true,
         Flags: []cli.Flag{
             &cli.StringFlag{
                 Name:    "netbox-url",
