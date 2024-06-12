@@ -16,7 +16,7 @@ func main() {
                     Subcommands: []*cli.Command{
                         {
                             Name: "list",
-                            Usage: "List all containers\nExample: paashup-cli docker container ps [-a] [hostname]\n",
+                            Usage: "List all containers\nExample: paashup-cli docker container ls [hostname]\n",
                             Aliases: []string{"ps", "ls"},
                             Action: psContainers,
                         },

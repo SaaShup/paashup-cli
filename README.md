@@ -28,8 +28,9 @@ The `docker` command allows you to manage Docker containers, hosts, and images. 
 
 - **list**: List all containers, optionally for a specific host.
   ```sh
-  paashup-cli docker container list
+  paashup-cli docker container ls [hostname]
   ```
+  - Aliases: `ps`, `ls`
 
 - **logs**: Get logs of a container.
   ```sh
@@ -78,7 +79,7 @@ Here are a few examples of how to use `paashup-cli`:
 
 - List all containers:
   ```sh
-  paashup-cli docker container list
+  paashup-cli docker container ls
   ```
 
 - Get logs of a container:
@@ -112,7 +113,7 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 ## License
 
-`paashup-cli` is released under the BSD 3 License. See `LICENSE` for more information.
+`paashup-cli` is released under the BSD 3-Clause License. See `LICENSE` for more information.
 
 ---
 
