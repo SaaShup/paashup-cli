@@ -7,6 +7,7 @@ import (
     "github.com/goccy/go-yaml"
     "strings"
     "time"
+    "github.com/rodaine/table"
     "github.com/urfave/cli/v2"
 )
 
@@ -21,6 +22,68 @@ func searchContainer(c *cli.Context, h HostComplete, containerName string) (Cont
 
 type operationType struct {
     Operation string `json:"operation"`
+}
+
+func psContainers(c *cli.Context) error {
+    hostname := c.Args().First()
+    var url string
+    if hostname != "" {
+        host, err := searchHost(c.Args().First(), c)
+        if err != nil {
+            fmt.Println("Host not found")
+            return nil
+        }
+        url = fmt.Sprintf("containers/?host_id=%d", host.Id)
+    } else {
+        url = fmt.Sprintf("containers/")
+    }
+
+    resultCall, err := netboxCall(c, url, "GET", nil)
+
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
+        return strings.ToUpper(fmt.Sprintf(format, vals...))
+    }
+
+    var tbl table.Table
+    if hostname == "" {
+        tbl = table.New("ID", "Name", "Hostname", "State")
+    } else {
+        tbl = table.New("ID", "Name", "State")
+    }
+
+    var result ContainerList
+
+    if err := json.Unmarshal(resultCall, &result); err != nil {  // Parse []byte to the go struct pointer
+        fmt.Println("Can not unmarshal JSON")
+    }
+
+    for _, rec := range result.Results {
+        if hostname == "" {
+            if c.Bool("all") {
+                tbl.AddRow(rec.Id, rec.Name, rec.Host.Name, rec.State)
+            } else {
+                if rec.State == "running" {
+                    tbl.AddRow(rec.Id, rec.Name, rec.Hostname, rec.State)
+                }
+            }
+        } else {
+            if c.Bool("all") {
+                tbl.AddRow(rec.Id, rec.Name, rec.State)
+            } else {
+                if rec.State == "running" {
+                    tbl.AddRow(rec.Id, rec.Name, rec.State)
+                }
+            }
+        }
+    }
+
+    tbl.Print()
+    return nil
+
 }
 
 func operationContainer(c *cli.Context, operation string) (Container, error) {

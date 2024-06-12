@@ -15,6 +15,18 @@ func main() {
                     Name: "container",
                     Subcommands: []*cli.Command{
                         {
+                            Name: "ps",
+                            Usage: "List all containers\nExample: paashup-cli docker container ps [-a] [hostname]\n",
+                            Action: psContainers,
+                            Flags: []cli.Flag{
+                                &cli.BoolFlag{
+                                    Name:    "all",
+                                    Aliases: []string{"a"},
+                                    Usage:   "Show all containers",
+                                },
+                            },
+                        },
+                        {
                             Name:  "list",
                             Usage: "List All containers, to list only on specific host proide the hostname\n",
                             Action: listContainers,
