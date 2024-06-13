@@ -10,7 +10,6 @@ import (
     "github.com/fatih/color"
     "github.com/rodaine/table"
     "github.com/urfave/cli/v2"
-    "github.com/mattn/go-runewidth"
 )
 
 func searchContainer(c *cli.Context, h HostComplete, containerName string) (Container, error) {
@@ -38,10 +37,6 @@ type listContainerStruct struct {
     NetworksCount int `json:"networks_count" yaml:"networks_count"`
     EnvCount int `json:"env_count" yaml:"env_count"`
     LabelsCount int `json:"labels_count" yaml:"labels_count"`
-}
-
-func calcWidhtColorRed(s string) int {
-    return runewidth.StringWidth(strings.Replace(strings.Replace(s, "\x1b[31m", "", 1), "\x1b[0m", "", 1))
 }
 
 func psContainers(c *cli.Context) error {
