@@ -10,6 +10,7 @@ import (
     "github.com/fatih/color"
     "github.com/rodaine/table"
     "github.com/urfave/cli/v2"
+    "github.com/mattn/go-runewidth"
 )
 
 func searchContainer(c *cli.Context, h HostComplete, containerName string) (Container, error) {
@@ -37,6 +38,10 @@ type listContainerStruct struct {
     NetworksCount int `json:"networks_count" yaml:"networks_count"`
     EnvCount int `json:"env_count" yaml:"env_count"`
     LabelsCount int `json:"labels_count" yaml:"labels_count"`
+}
+
+func calcWidhtColorRed(s string) int {
+    return runewidth.StringWidth(strings.Replace(strings.Replace(s, "\x1b[31m", "", 1), "\x1b[0m", "", 1))
 }
 
 func psContainers(c *cli.Context) error {
@@ -69,20 +74,23 @@ func psContainers(c *cli.Context) error {
         table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
             return ""
         }
-
+        table.DefaultWidthFunc = calcWidhtColorRed
         var tbl table.Table
         // Does not allow to disable header.. :(
         // should we migrate to another table library? 
-        tbl = table.New("", "", "", "", "", "", "", "", "", "", "")
-
+        tbl = table.New("", "", "", "", "", "", "", "", "", "", "").WithPadding(2)
         for _, rec := range result.Results {
             if rec.State == "running" {
-                tbl.AddRow(rec.Id, rec.Name, rec.Host.Name, rec.Image.Name, rec.State, len(rec.Ports), len(rec.Mounts), len(rec.Binds), len(rec.Network_settings), len(rec.Env), len(rec.Labels))
+                tbl.AddRow(rec.Id, rec.Name, rec.Host.Name, rec.Image.Name, rec.State, fmt.Sprintf("%d P", len(rec.Ports)), 
+                    fmt.Sprintf("%d M", len(rec.Mounts)), fmt.Sprintf("%d B", len(rec.Binds)), fmt.Sprintf("%d N", len(rec.Network_settings)), 
+                    fmt.Sprintf("%d E", len(rec.Env)), fmt.Sprintf("%d L", len(rec.Labels)))
             } else {
-                tbl.AddRow(color.RedString("%d", rec.Id), color.RedString(rec.Name), color.RedString(rec.Host.Name), color.RedString(rec.Image.Name), color.RedString(rec.State), color.RedString("%d P", len(rec.Ports)), color.RedString("%d M", len(rec.Mounts)), color.RedString("%d B", len(rec.Binds)), color.RedString("%d N", len(rec.Network_settings)), color.RedString("%d E", len(rec.Env)), color.RedString("%d L", len(rec.Labels)))
+                tbl.AddRow(color.RedString("%d", rec.Id), color.RedString("%s", rec.Name), color.RedString("%s", rec.Host.Name), 
+                    color.RedString("%s", rec.Image.Name), color.RedString("%s", rec.State), color.RedString("%d P", len(rec.Ports)), 
+                    color.RedString("%d M", len(rec.Mounts)), color.RedString("%d B", len(rec.Binds)), color.RedString("%d N", len(rec.Network_settings)), 
+                    color.RedString("%d E", len(rec.Env)), color.RedString("%d L", len(rec.Labels)))
             }
         }
-
         tbl.Print()
     } else {
         var listContainer []listContainerStruct
@@ -90,6 +98,11 @@ func psContainers(c *cli.Context) error {
             listContainer = append(listContainer, listContainerStruct{Id: rec.Id, Name: rec.Name, Host: rec.Host.Name, Image: rec.Image.Name, State: rec.State, PortsCount: len(rec.Ports), MountsCount: len(rec.Mounts), BindsCount: len(rec.Binds), NetworksCount: len(rec.Network_settings), EnvCount: len(rec.Env), LabelsCount: len(rec.Labels)})
         }
         switch c.String("format"){
+            case "json-pretty":
+                resp, err := json.MarshalIndent(listContainer, "", "    ")
+                if err == nil {
+                    fmt.Printf("%s\n", resp)
+                }
             case "json":
                 resp, err := json.Marshal(listContainer)
                 if err == nil {
@@ -203,6 +216,11 @@ func inspectContainer(c *cli.Context) error {
             fmt.Println("Can not unmarshal JSON")
         }
         switch c.String("format"){
+            case "json-pretty":
+                resp, err := json.MarshalIndent(result, "", "    ")
+                if err == nil {
+                    fmt.Printf("%s\n", resp)
+                }
             case "json":
                 resp, err := json.Marshal(result)
                 if err == nil {

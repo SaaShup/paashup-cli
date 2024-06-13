@@ -110,7 +110,7 @@ func main() {
             &cli.StringFlag{
                 Name:    "format",
                 Aliases: []string{"f"},
-                Usage:   "choose between yaml, json Default: json",
+                Usage:   "choose between yaml, json, json-pretty Default: json",
             },
         },
         Commands: []*cli.Command{
