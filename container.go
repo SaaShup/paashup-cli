@@ -77,7 +77,7 @@ func psContainers(c *cli.Context) error {
 
         for _, rec := range result.Results {
             if rec.State == "running" {
-                tbl.AddRow(color.GreenString("%d", rec.Id), color.GreenString(rec.Name), color.GreenString(rec.Host.Name), color.GreenString(rec.Image.Name), color.GreenString(rec.State), color.GreenString("%d P", len(rec.Ports)), color.GreenString("%d M", len(rec.Mounts)), color.GreenString("%d B", len(rec.Binds)), color.GreenString("%d N", len(rec.Network_settings)), color.GreenString("%d E", len(rec.Env)), color.GreenString("%d L", len(rec.Labels)))
+                tbl.AddRow(rec.Id, rec.Name, rec.Host.Name, rec.Image.Name, rec.State, len(rec.Ports), len(rec.Mounts), len(rec.Binds), len(rec.Network_settings), len(rec.Env), len(rec.Labels))
             } else {
                 tbl.AddRow(color.RedString("%d", rec.Id), color.RedString(rec.Name), color.RedString(rec.Host.Name), color.RedString(rec.Image.Name), color.RedString(rec.State), color.RedString("%d P", len(rec.Ports)), color.RedString("%d M", len(rec.Mounts)), color.RedString("%d B", len(rec.Binds)), color.RedString("%d N", len(rec.Network_settings)), color.RedString("%d E", len(rec.Env)), color.RedString("%d L", len(rec.Labels)))
             }

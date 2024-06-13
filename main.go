@@ -7,6 +7,23 @@ import (
 )
 
 func main() {
+    netboxSubcommands := []*cli.Command{
+        {
+            Name: "netbox",
+            Subcommands: []*cli.Command{
+                {
+                    Name: "set-config",
+                    Usage: "Set Netbox Config\nExample: paashup-cli netbox set-config NAME NETBOX_URL NETBOX_TOKEN\n",
+                    Action: setNetboxConfig,
+                },
+                {
+                    Name: "use",
+                    Usage: "Use Netbox Config\nExample: paashup-cli netbox use NAME\n",
+                    Action: useNetboxConfig,
+                },
+            },
+        },
+    }
     dockerSubcommands := []*cli.Command{
         {
             Name: "docker",
@@ -86,24 +103,10 @@ func main() {
     app := &cli.App{
         Name:  "paashup-cli",
         Version: version,
-        Usage: "Manage your paashup",
+        Usage: "Manage your paashup\nTo setup please use first paashup-cli netbox set-config\n",
         EnableBashCompletion: true,
         Suggest: true,
         Flags: []cli.Flag{
-            &cli.StringFlag{
-                Name:    "netbox-url",
-                Aliases: []string{"N"},
-                Usage:   "Netbox URL",
-                Required: true,
-                EnvVars: []string{"NETBOX_URL"},
-            },
-            &cli.StringFlag{
-                Name:    "netbox-token",
-                Aliases: []string{"T"},
-                Usage:   "Netbox Token",
-                Required: true,
-                EnvVars: []string{"NETBOX_TOKEN"},
-            },
             &cli.StringFlag{
                 Name:    "format",
                 Aliases: []string{"f"},
@@ -112,6 +115,7 @@ func main() {
         },
         Commands: []*cli.Command{
             dockerSubcommands[0],
+            netboxSubcommands[0],
         },
     }
 

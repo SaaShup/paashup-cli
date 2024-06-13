@@ -10,15 +10,43 @@ To install `paashup-cli`, ensure you have Go installed and run:
 go get github.com/saashup/paashup-cli
 ```
 
+# paashup-cli
+
+`paashup-cli` is a command-line tool for managing your paashup environment, including Docker containers, hosts, images, and Netbox configurations. This tool provides various commands to list, inspect, start, stop, and execute operations on Docker containers, as well as managing Docker hosts, images, and Netbox configurations.
+
+## Setup
+First you need to define the netbox source:
+```sh 
+paashup-cli netbox set-config name http://netbox.local mytoken
+```
+
+For autocompletion, download the completion script (autocompletion.bash) and then source it like this:
+```sh 
+PROG=paashup-cli source autocompletion.bash
+
+```
+
 ## Usage
 
 ### Global Flags
 
-- `--netbox-url, -N`: Netbox URL (Required, can be set via `NETBOX_URL` environment variable)
-- `--netbox-token, -T`: Netbox Token (Required, can be set via `NETBOX_TOKEN` environment variable)
 - `--format, -f`: Choose between `yaml` and `json` (Default: `json`)
 
 ### Commands
+
+#### Netbox
+
+The `netbox` command allows you to manage Netbox configurations. It has several subcommands:
+
+- **set-config**: Set Netbox configuration.
+  ```sh
+  paashup-cli netbox set-config NAME NETBOX_URL NETBOX_TOKEN
+  ```
+
+- **use**: Use a specific Netbox configuration.
+  ```sh
+  paashup-cli netbox use NAME
+  ```
 
 #### Docker
 
@@ -76,6 +104,16 @@ The `docker` command allows you to manage Docker containers, hosts, and images. 
 ## Examples
 
 Here are a few examples of how to use `paashup-cli`:
+
+- Set a Netbox configuration:
+  ```sh
+  paashup-cli netbox set-config myconfig http://netbox.local mytoken
+  ```
+
+- Use a specific Netbox configuration:
+  ```sh
+  paashup-cli netbox use myconfig
+  ```
 
 - List all containers:
   ```sh
