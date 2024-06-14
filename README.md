@@ -1,6 +1,6 @@
 # paashup-cli
 
-`paashup-cli` is a command-line tool to manage your paashup environment. It provides various commands to interact with containers, hosts, and images.
+`paashup-cli` is a command-line tool for managing your paashup environment, including Docker containers, hosts, images, and Netbox configurations. This tool provides various commands to list, inspect, start, stop, and execute operations on Docker containers, as well as managing Docker hosts, images, and Netbox configurations.
 
 ## Installation
 
@@ -9,10 +9,6 @@ To install `paashup-cli`, ensure you have Go installed and run:
 ```bash
 go get github.com/saashup/paashup-cli
 ```
-
-# paashup-cli
-
-`paashup-cli` is a command-line tool for managing your paashup environment, including Docker containers, hosts, images, and Netbox configurations. This tool provides various commands to list, inspect, start, stop, and execute operations on Docker containers, as well as managing Docker hosts, images, and Netbox configurations.
 
 ## Setup
 First you need to define the netbox source:
@@ -30,13 +26,13 @@ PROG=paashup-cli source autocompletion.bash
 
 ### Global Flags
 
-- `--format, -f`: Choose between `yaml` and `json` (Default: `json`)
+- `--format, -f`: Choose between `yaml`, `json`, `json-pretty` (Default: `json`)
 
 ### Commands
 
 #### Netbox
 
-The `netbox` command allows you to manage Netbox configurations. It has several subcommands:
+The `netbox` command allows you to manage Netbox configurations. It has the following subcommands:
 
 - **set-config**: Set Netbox configuration.
   ```sh
@@ -50,7 +46,7 @@ The `netbox` command allows you to manage Netbox configurations. It has several 
 
 #### Docker
 
-The `docker` command allows you to manage Docker containers, hosts, and images. It has several subcommands:
+The `docker` command allows you to manage Docker containers, hosts, and images. It has the following subcommands:
 
 ##### Container
 
@@ -93,6 +89,12 @@ The `docker` command allows you to manage Docker containers, hosts, and images. 
   ```sh
   paashup-cli docker host list
   ```
+  - Aliases: `ls`, `ps`
+
+- **inspect**: Inspect a Docker host.
+  ```sh
+  paashup-cli docker host inspect <hostname>
+  ```
 
 ##### Image
 
@@ -100,6 +102,7 @@ The `docker` command allows you to manage Docker containers, hosts, and images. 
   ```sh
   paashup-cli docker image list
   ```
+  - Aliases: `ls`, `ps`
 
 ## Examples
 
@@ -151,7 +154,7 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 ## License
 
-`paashup-cli` is released under the BSD 3-Clause License. See `LICENSE` for more information.
+`paashup-cli` is released under the BSD 3-Clause License. See the `LICENSE` file for more information.
 
 ---
 
