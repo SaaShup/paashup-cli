@@ -3,6 +3,7 @@ module paashup.com/paashup-cli
 go 1.22
 
 require (
+	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/goccy/go-yaml v1.11.3 // indirect

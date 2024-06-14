@@ -84,8 +84,14 @@ func main() {
 						{
 							Name:   "list",
 							Usage:  "List All Host",
+                            Aliases: []string{"ls", "ps"},
 							Action: listHosts,
 						},
+                        {
+                            Name: "inspect",
+                            Usage: "Inspect a host",
+                            Action: inspectHost,
+                        },
 					},
 				},
 				{
@@ -94,6 +100,7 @@ func main() {
 						{
 							Name:  "list",
 							Usage: "List all images",
+                            Aliases: []string{"ls", "ps"},
 						},
 					},
 				},
