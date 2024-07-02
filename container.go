@@ -39,30 +39,59 @@ type listContainerStruct struct {
 	LabelsCount   int    `json:"labels_count" yaml:"labels_count"`
 }
 
+func listContainers() (ContainerList, error){
+    resultCall, err := netboxCall(nil, "containers/", "GET", nil)
+
+    if err != nil {
+        return ContainerList{}, err
+    }
+
+    var result ContainerList
+
+    if err := json.Unmarshal(resultCall, &result); err != nil { // Parse []byte to the go struct pointer
+        return ContainerList{}, err
+    }
+
+    return result, nil
+}
+
+func listContainersByHost(hostId int) (ContainerList, error){
+    resultCall, err := netboxCall(nil, fmt.Sprintf("containers/?host_id=%d", hostId), "GET", nil)
+
+    if err != nil {
+        return ContainerList{}, err
+    }
+
+    var result ContainerList
+
+    if err := json.Unmarshal(resultCall, &result); err != nil { // Parse []byte to the go struct pointer
+        return ContainerList{}, err
+    }
+
+    return result, nil
+}
+
 func psContainers(c *cli.Context) error {
 	hostname := c.Args().First()
-	var url string
+    var result ContainerList
 	if hostname != "" {
 		host, err := searchHost(c.Args().First(), c)
 		if err != nil {
 			fmt.Println("Host not found")
 			return nil
 		}
-		url = fmt.Sprintf("containers/?host_id=%d", host.Id)
+        result, err = listContainersByHost(host.Id)
+        if err != nil {
+            fmt.Println("Error getting containers")
+            return nil
+        }
 	} else {
-		url = fmt.Sprintf("containers/")
-	}
-
-	resultCall, err := netboxCall(c, url, "GET", nil)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var result ContainerList
-
-	if err := json.Unmarshal(resultCall, &result); err != nil { // Parse []byte to the go struct pointer
-		fmt.Println("Can not unmarshal JSON")
+        var err error
+		result, err = listContainers()
+        if err != nil {
+            fmt.Println("Error getting containers")
+            return nil
+        }
 	}
 
 	if c.String("format") == "" {
@@ -119,23 +148,29 @@ func psContainers(c *cli.Context) error {
 
 }
 
-func operationContainer(c *cli.Context, operation string) (Container, error) {
+func operationContainerContext(c *cli.Context, operation string) (Container, error) {
+    host, err := searchHost(c.Args().First(), c)
+    if err != nil {
+        fmt.Println("Host not found")
+        return Container{}, nil
+    }
 
-	host, err := searchHost(c.Args().First(), c)
-	if err != nil {
-		return Container{}, fmt.Errorf("Host not found")
-	}
+    container, err := searchContainer(c, host, c.Args().Get(c.Args().Len()-1))
+    if err != nil {
+        fmt.Println("Container not found")
+        return Container{}, nil
+    }
+    
+    return operationContainer(container, c.Bool("nowait"), operation)
+}
 
-	container, err := searchContainer(c, host, c.Args().Get(c.Args().Len()-1))
-	if err != nil {
-		return Container{}, fmt.Errorf("Container not found")
-	}
+func operationContainer(container Container, wait bool, operation string) (Container, error) {
 
 	url := fmt.Sprintf("containers/%d/", container.Id)
 	operationS := &operationType{Operation: operation}
 	jsonStr, _ := json.Marshal(operationS)
 
-	resultCall, err := netboxCall(c, url, "PATCH", jsonStr)
+	resultCall, err := netboxCall(nil, url, "PATCH", jsonStr)
 
 	if err != nil {
 		log.Fatal(err)
@@ -147,11 +182,11 @@ func operationContainer(c *cli.Context, operation string) (Container, error) {
 		fmt.Println("Can not unmarshal JSON")
 	}
 
-	if result.Operation == operation && !c.Bool("nowait") {
+	if result.Operation == operation && !wait {
 		i := 0
 		for i < 20 {
 			var resultFor Container
-			resultCall, err = netboxCall(c, url, "GET", nil)
+			resultCall, err = netboxCall(nil, url, "GET", nil)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -274,7 +309,7 @@ func execContainer(c *cli.Context) error {
 }
 
 func stopContainer(c *cli.Context) error {
-	container, err := operationContainer(c, "stop")
+	container, err := operationContainerContext(c, "stop")
 	if err != nil {
 		fmt.Println(err)
 		return nil
@@ -284,7 +319,7 @@ func stopContainer(c *cli.Context) error {
 }
 
 func startContainer(c *cli.Context) error {
-	container, err := operationContainer(c, "start")
+	container, err := operationContainerContext(c, "start")
 	if err != nil {
 		fmt.Println(err)
 		return nil
