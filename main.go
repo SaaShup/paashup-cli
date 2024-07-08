@@ -24,6 +24,18 @@ func main() {
 			},
 		},
 	}
+    stackSubcommands := []*cli.Command{
+        {
+            Name: "stack",
+            Subcommands: []*cli.Command{
+                {
+                    Name: "deploy",
+                    Usage: "Deploy a stack\nExample: paashup-cli stack deploy YAMLFILE\n",
+                    Action: stackDeploy,
+                },
+            },
+        },
+    }
 	dockerSubcommands := []*cli.Command{
 		{
 			Name: "docker",
@@ -123,6 +135,7 @@ func main() {
 		Commands: []*cli.Command{
 			dockerSubcommands[0],
 			netboxSubcommands[0],
+            stackSubcommands[0],
 		},
 	}
 

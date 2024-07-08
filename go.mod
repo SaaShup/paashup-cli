@@ -1,8 +1,10 @@
 module paashup.com/paashup-cli
 
-go 1.22
+go 1.22.2
 
 require (
+	github.com/SaaShup/paashup-sdk/docker v0.0.0-20240708090649-e9e7c4015075 // indirect
+	github.com/SaaShup/paashup-sdk/netbox v0.0.0-20240708075831-c60b9328b90d // indirect
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/fatih/color v1.17.0 // indirect

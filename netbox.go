@@ -1,15 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/urfave/cli/v2"
 	"io/ioutil"
-	"log"
-	"net/http"
 	"os"
-	"strings"
 )
 
 type NetboxConfig struct {
@@ -38,9 +33,9 @@ func setConfig(name, url, token string) error {
 		json.Unmarshal(file, &netboxConfig)
 		for i, config := range netboxConfig {
 			if config.Name == name {
-				netboxConfig[i].Name = name
-				netboxConfig[i].URL = url
-				netboxConfig[i].Token = token
+                netboxConfig[i].URL = url
+                netboxConfig[i].Token = token
+                netboxConfig[i].Name = name
 			}
 		}
 		netboxConfig = append(netboxConfig, NetboxConfig{Name: name, URL: url, Token: token})
@@ -69,7 +64,7 @@ func useNetboxConfig(c *cli.Context) error {
 	return nil
 }
 
-func readConfig(c *cli.Context) (NetboxConfig, error) {
+func readConfig(c *cli.Context) (NetboxConfig, error){
 	var configpath string
 	if os.Getenv("XDG_CONFIG_HOME") == "" {
 		configpath = os.Getenv("HOME") + "/.config/paashup-cli/"
@@ -83,11 +78,11 @@ func readConfig(c *cli.Context) (NetboxConfig, error) {
 	json.Unmarshal(file, &netboxConfig)
 	for _, config := range netboxConfig {
 		if config.Name == string(name) {
-			return config, nil
+            return config, nil
 		}
 	}
 	cli.ShowAppHelpAndExit(c, 1)
-	return NetboxConfig{}, nil
+    return NetboxConfig{}, nil
 }
 
 func setNetboxConfig(c *cli.Context) error {
@@ -100,32 +95,3 @@ func setNetboxConfig(c *cli.Context) error {
 	return setConfig(name, url, token)
 }
 
-func netboxCall(c *cli.Context, endpoint string, method string, jsonStr []byte) ([]byte, error) {
-	netboxConfig, err := readConfig(c)
-	if err != nil {
-		log.Fatal(err)
-		cli.ShowAppHelpAndExit(c, 1)
-	}
-	netboxUrl := strings.TrimRight(netboxConfig.URL, "/")
-	client := &http.Client{}
-
-	url := fmt.Sprintf("%s/api/plugins/docker/%s", netboxUrl, endpoint)
-	req, err := http.NewRequest(method, url, ioutil.NopCloser(bytes.NewBuffer(jsonStr)))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	req.ContentLength = int64(len(jsonStr))
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Token %s", netboxConfig.Token))
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer res.Body.Close()
-
-	// ...
-	return ioutil.ReadAll(res.Body)
-}
