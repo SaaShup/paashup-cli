@@ -10,6 +10,7 @@ import (
     "github.com/SaaShup/paashup-sdk/docker"
     "github.com/SaaShup/paashup-sdk/netbox"
 	"log"
+    "time"
 )
 
 type listContainerStruct struct {
@@ -210,6 +211,27 @@ func stopContainer(c *cli.Context) error {
 		fmt.Println(err)
 		return nil
 	}
+	if operationContainer.Operation == "stop" {
+        if !c.Bool("wait") {
+		    i := 0
+		    for i < 20 {
+                resultCall, err := docker.ContainerInspect(operationContainer.Id)
+			    if err != nil {
+				    log.Fatal(err)
+			    }
+			    if resultCall.State == "exited" {
+                    break
+                }
+			    time.Sleep(1 * time.Second)
+			    i++
+		    }
+		    return fmt.Errorf("Timeout")
+        }
+	
+	} else {
+		fmt.Println("Operation not executed")
+	}
+
 	fmt.Println("Container " + operationContainer.Name + " stopped")
 	return nil
 }
@@ -236,6 +258,27 @@ func startContainer(c *cli.Context) error {
 		fmt.Println(err)
 		return nil
 	}
+	if operationContainer.Operation == "start" {
+        if !c.Bool("wait") {
+		    i := 0
+		    for i < 20 {
+                resultCall, err := docker.ContainerInspect(operationContainer.Id)
+			    if err != nil {
+				    log.Fatal(err)
+			    }
+			    if resultCall.State == "running" {
+                    break
+                }
+			    time.Sleep(1 * time.Second)
+			    i++
+		    }
+		    return fmt.Errorf("Timeout")
+        }
+	
+	} else {
+		fmt.Println("Operation not executed")
+	}
+
 	fmt.Println("Container " + operationContainer.Name + " started")
 	return nil
 }
