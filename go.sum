@@ -1,7 +1,7 @@
-github.com/SaaShup/paashup-sdk/docker v0.0.0-20240708090649-e9e7c4015075 h1:sdM3ZyQtuAxkaK8Wq8LSZ2dTUk5Rp4uu5W3kzHzaGgI=
-github.com/SaaShup/paashup-sdk/docker v0.0.0-20240708090649-e9e7c4015075/go.mod h1:TzbC1QEgBtOuJGmPlRfGDCFkXBjPZkh64Q8qPsCIc6U=
-github.com/SaaShup/paashup-sdk/netbox v0.0.0-20240708075831-c60b9328b90d h1:32INbVGjD+BbqeUcWlYproqWkK0oy3g8Eoa87A1AxvY=
-github.com/SaaShup/paashup-sdk/netbox v0.0.0-20240708075831-c60b9328b90d/go.mod h1:h1+jD1MtvhEQ4F9qitcHBr08SPKxW21D6zHubUv1TEE=
+github.com/SaaShup/paashup-sdk/docker v0.0.0-20240709125911-79f07b1589d2 h1:UmcTxys6PcsWnZ1BCUXOFqTT+vY+Q9Q5IY5A4Fr8a6s=
+github.com/SaaShup/paashup-sdk/docker v0.0.0-20240709125911-79f07b1589d2/go.mod h1:TzbC1QEgBtOuJGmPlRfGDCFkXBjPZkh64Q8qPsCIc6U=
+github.com/SaaShup/paashup-sdk/netbox v0.0.0-20240709125911-79f07b1589d2 h1:vtnkxiEewbwek8krxo4TxTIhifBm7c8eIpyF/FWJyq0=
+github.com/SaaShup/paashup-sdk/netbox v0.0.0-20240709125911-79f07b1589d2/go.mod h1:h1+jD1MtvhEQ4F9qitcHBr08SPKxW21D6zHubUv1TEE=
 github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d h1:licZJFw2RwpHMqeKTCYkitsPqHNxTmd4SNR5r94FGM8=
 github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d/go.mod h1:asat636LX7Bqt5lYEZ27JNDcqxfjdBQuJ/MM4CN/Lzo=
 github.com/cpuguy83/go-md2man/v2 v2.0.4 h1:wfIWP927BUkWJb2NmU/kNDYIBTh/ziUX91+lVfRxZq4=

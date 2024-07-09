@@ -13,6 +13,259 @@ import (
     "time"
 )
 
+type listRegistryStruct struct {
+    Id   int    `json:"id" yaml:"id"`
+    Name string `json:"name" yaml:"name"`
+    Url  string `json:"url" yaml:"url"`
+    Username string `json:"username" yaml:"username"`
+    Password string `json:"password" yaml:"password"`
+    ImageCount int `json:"image_count" yaml:"image_count"`
+}
+
+func listRegistries(c *cli.Context) error {
+    config, _ := readConfig(c)
+    netbox.NETBOX_URL = config.URL
+    netbox.NETBOX_TOKEN = config.Token
+    
+	hostname := c.Args().First()
+    var result docker.RegistryListStruct
+	if hostname != "" {
+		host, err := docker.HostSearchByName(c.Args().First())
+		if err != nil {
+			fmt.Println("Host not found")
+			return nil
+		}
+        result, err = docker.RegistryListByHost(host.Id)
+        if err != nil {
+            fmt.Println("Error getting Volumes")
+            return nil
+        }
+	} else {
+        var err error
+		result, err = docker.RegistryList()
+        if err != nil {
+            fmt.Println("Error getting Volumes")
+            return nil
+        }
+	}
+
+	if c.String("format") == "" {
+		table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
+			return ""
+		}
+		table.DefaultWidthFunc = calcWidhtColorRed
+		var tbl table.Table
+		// Does not allow to disable header.. :(
+		// should we migrate to another table library?
+		tbl = table.New("", "", "", "", "", "", "", "", "", "", "").WithPadding(2)
+		for _, rec := range result.Results {
+			tbl.AddRow(rec.Id, rec.Name, rec.Host.Name, rec.Username, rec.Password, rec.Url, fmt.Sprintf("%d I", len(rec.Images)))
+		}
+		tbl.Print()
+	} else {
+		var listRegistry []listRegistryStruct
+		for _, rec := range result.Results {
+            listRegistry = append(listRegistry, listRegistryStruct{Id: rec.Id, Name: rec.Name, Username: rec.Username, Password: rec.Password, Url: rec.Url, ImageCount: len(rec.Images)})
+		}
+		switch c.String("format") {
+		case "json-pretty":
+			resp, err := json.MarshalIndent(listRegistry, "", "    ")
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		case "json":
+			resp, err := json.Marshal(listRegistry)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		case "yaml":
+			resp, err := yaml.Marshal(listRegistry)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		default:
+			resp, err := json.Marshal(listRegistry)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		}
+	}
+	return nil
+   
+}
+
+
+type listVolumeStruct struct {
+    Id          int    `json:"id" yaml:"id"`
+    Name        string `json:"name" yaml:"name"`
+    Host        string `json:"host" yaml:"host"`
+    Driver      string `json:"driver" yaml:"driver"`
+    MountCount  int     `json:"mount_count" yaml:"mount_count"`
+}
+
+func listVolumes(c *cli.Context) error {
+    config, _ := readConfig(c)
+    netbox.NETBOX_URL = config.URL
+    netbox.NETBOX_TOKEN = config.Token
+    
+	hostname := c.Args().First()
+    var result docker.VolumeListStruct
+	if hostname != "" {
+		host, err := docker.HostSearchByName(c.Args().First())
+		if err != nil {
+			fmt.Println("Host not found")
+			return nil
+		}
+        result, err = docker.VolumeListByHost(host.Id)
+        if err != nil {
+            fmt.Println("Error getting Volumes")
+            return nil
+        }
+	} else {
+        var err error
+		result, err = docker.VolumeList()
+        if err != nil {
+            fmt.Println("Error getting Volumes")
+            return nil
+        }
+	}
+
+	if c.String("format") == "" {
+		table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
+			return ""
+		}
+		table.DefaultWidthFunc = calcWidhtColorRed
+		var tbl table.Table
+		// Does not allow to disable header.. :(
+		// should we migrate to another table library?
+		tbl = table.New("", "", "", "", "", "", "", "", "", "", "").WithPadding(2)
+		for _, rec := range result.Results {
+			tbl.AddRow(rec.Id, rec.Name, rec.Host.Name, rec.Driver, fmt.Sprintf("%d M", len(rec.Mounts)))
+		}
+		tbl.Print()
+	} else {
+		var listVolumes []listVolumeStruct
+		for _, rec := range result.Results {
+            listVolumes = append(listVolumes, listVolumeStruct{Id: rec.Id, Name: rec.Name, Host: rec.Host.Name, Driver: rec.Driver, MountCount: len(rec.Mounts)})
+		}
+		switch c.String("format") {
+		case "json-pretty":
+			resp, err := json.MarshalIndent(listVolumes, "", "    ")
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		case "json":
+			resp, err := json.Marshal(listVolumes)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		case "yaml":
+			resp, err := yaml.Marshal(listVolumes)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		default:
+			resp, err := json.Marshal(listVolumes)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		}
+	}
+	return nil
+   
+}
+
+
+type listImageStruct struct {
+    Id          int    `json:"id" yaml:"id"`
+    Name        string `json:"name" yaml:"name"`
+    Host        string `json:"host" yaml:"host"`
+    Size        int `json:"size" yaml:"size"`
+    Digest      string `json:"digest" yaml:"digest"`
+    ImageID     string `json:"imageID" yaml:"imageID"`
+    Registry    string `json:"registry" yaml:"registry"`
+    ContainerCount int `json:"container_count" yaml:"container_count"`
+}
+
+func listImages(c *cli.Context) error {
+    config, _ := readConfig(c)
+    netbox.NETBOX_URL = config.URL
+    netbox.NETBOX_TOKEN = config.Token
+    
+	hostname := c.Args().First()
+    var result docker.ImageListStruct
+	if hostname != "" {
+		host, err := docker.HostSearchByName(c.Args().First())
+		if err != nil {
+			fmt.Println("Host not found")
+			return nil
+		}
+        result, err = docker.ImageListByHost(host.Id)
+        if err != nil {
+            fmt.Println("Error getting Images")
+            return nil
+        }
+	} else {
+        var err error
+		result, err = docker.ImageList()
+        if err != nil {
+            fmt.Println("Error getting Images")
+            return nil
+        }
+	}
+
+	if c.String("format") == "" {
+		table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
+			return ""
+		}
+		table.DefaultWidthFunc = calcWidhtColorRed
+		var tbl table.Table
+		// Does not allow to disable header.. :(
+		// should we migrate to another table library?
+		tbl = table.New("", "", "", "", "", "", "", "", "", "", "").WithPadding(2)
+		for _, rec := range result.Results {
+			if rec.Size > 0 {
+				tbl.AddRow(rec.Id, rec.Name, rec.Host.Name, rec.Registry.Name, rec.Image.Name, rec.Size, rec.ImageID, rec.Digest, fmt.Sprintf("%d P", len(rec.Containers)))
+			} else {
+				tbl.AddRow(color.RedString("%d", rec.Id), color.RedString("%s", rec.Name), color.RedString("%s", rec.Host.Name), color.RedString("%s", rec.Registry.Name),
+					color.RedString("%s", rec.Image.Name), color.RedString("%s", rec.Size), color.RedString("%d P", len(rec.ImageID)),
+					color.RedString("%d M", len(rec.Digest)), color.RedString("%d B", len(rec.Containers)))
+			}
+		}
+		tbl.Print()
+	} else {
+		var listImages []listImageStruct
+		for _, rec := range result.Results {
+            listImages = append(listImages, listImageStruct{Id: rec.Id, Name: rec.Name, Host: rec.Host.Name, Registry: rec.Registry.Name, Size: rec.Size, ImageID: rec.ImageID, Digest: rec.Digest, ContainerCount: len(rec.Containers)})
+		}
+		switch c.String("format") {
+		case "json-pretty":
+			resp, err := json.MarshalIndent(listImages, "", "    ")
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		case "json":
+			resp, err := json.Marshal(listImages)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		case "yaml":
+			resp, err := yaml.Marshal(listImages)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		default:
+			resp, err := json.Marshal(listImages)
+			if err == nil {
+				fmt.Printf("%s\n", resp)
+			}
+		}
+	}
+	return nil
+
+   
+}
+
 type listContainerStruct struct {
 	Id            int    `json:"id" yaml:"id"`
 	Name          string `json:"name" yaml:"name"`

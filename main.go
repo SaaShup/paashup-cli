@@ -113,10 +113,34 @@ func main() {
 							Name:  "list",
 							Usage: "List all images",
                             Aliases: []string{"ls", "ps"},
+                            Action: listImages,
 						},
 					},
 				},
-			},
+				{
+					Name: "volume",
+					Subcommands: []*cli.Command{
+						{
+							Name:  "list",
+							Usage: "List all Volumes",
+                            Aliases: []string{"ls", "ps"},
+                            Action: listVolumes,
+						},
+					},
+				},
+				{
+					Name: "registry",
+					Subcommands: []*cli.Command{
+						{
+							Name:  "list",
+							Usage: "List all Registries",
+                            Aliases: []string{"ls", "ps"},
+                            Action: listRegistries,
+						},
+					},
+				},
+
+            },
 		},
 	}
 	app := &cli.App{
