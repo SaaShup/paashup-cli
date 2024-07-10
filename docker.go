@@ -37,14 +37,16 @@ func listRegistries(c *cli.Context) error {
 		}
         result, err = docker.RegistryListByHost(host.Id)
         if err != nil {
-            fmt.Println("Error getting Volumes")
+            fmt.Println(err)
+            fmt.Println("Error getting Registry")
             return nil
         }
 	} else {
         var err error
 		result, err = docker.RegistryList()
         if err != nil {
-            fmt.Println("Error getting Volumes")
+            fmt.Println(err)
+            fmt.Println("Error getting Registry")
             return nil
         }
 	}

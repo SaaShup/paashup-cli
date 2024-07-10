@@ -5,6 +5,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"io/ioutil"
 	"os"
+    "fmt"
 )
 
 type NetboxConfig struct {
@@ -44,6 +45,7 @@ func setConfig(name, url, token string) error {
 	file, _ := json.MarshalIndent(netboxConfig, "", " ")
 	_ = ioutil.WriteFile(configpath+"netbox.json", file, 0644)
 	_ = ioutil.WriteFile(configpath+"current", []byte(name), 0644)
+    fmt.Println("Config set to " + name)
 	return nil
 }
 
