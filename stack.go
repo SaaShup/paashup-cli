@@ -42,6 +42,15 @@ type stackCompose struct {
         Password string `json:"password" yaml:"password"`
         Hostname string `json:"hostname" yaml:"hostname"`
     } `json:"registry" yaml:"registry"`
+    Host map[string]struct {
+        Endpoint struct {
+            Address string `json:"address" yaml:"address"`
+            Proto string `json:"proto" yaml:"proto"`
+            Username string `json:"username" yaml:"username"`
+            Password string `json:"password" yaml:"password"`
+            Port int `json:"port" yaml:"port"`
+        }`json:"endpoint" yaml:"endpoint"`
+    } `json:"host" yaml:"host"`
 }
 
 func stackDeployRun(c *cli.Context, compose stackCompose) error {
@@ -50,6 +59,42 @@ func stackDeployRun(c *cli.Context, compose stackCompose) error {
     config, _ := readConfig(c)
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
+
+    for name, host := range compose.Host {
+        resp, err := docker.HostSearchByName(name)
+        var vmResponseCreate NetboxVmResponse 
+        if err != nil {
+            vmResponseCreate, err = findVm(c, name)
+
+            if err != nil {
+                fmt.Printf("Creating vm %s\n", name)
+                vmResponseCreate, err = createVm(c, name)
+                if err != nil {
+                    log.Fatal(fmt.Sprintf("Failed to create host %s", name))
+                }
+                for i := 0; i < 30; i++ {
+                    vmResponseCreate, err = findVm(c, name)
+                    if err != nil {
+                        log.Fatal("Could not create VM")
+                    }
+                    if vmResponseCreate.Status.Value == "active" {
+                        break
+                    }
+                    time.Sleep(90 * time.Second)
+                }
+                fmt.Printf("VM %s created\n", name)
+            }
+            createHostStruct := docker.HostCreateStruct{Name: name, Endpoint: fmt.Sprintf("%s://%s:%s@%s:%d", host.Endpoint.Proto, host.Endpoint.Username, host.Endpoint.Password, strings.TrimSuffix(vmResponseCreate.PrimaryIp.Address, "/32"), host.Endpoint.Port)}
+            createHost, err := docker.HostCreate(createHostStruct)
+            if err != nil {
+                log.Fatal(fmt.Sprintf("Failed to create host %s", name))
+            }
+            fmt.Printf("Host %s created\n", createHost.Name)
+            time.Sleep(60 * time.Second)
+        } else {
+            fmt.Printf("Host %s found\n", resp.Name)
+        }
+    }
 
     for name, registry := range compose.Registry {
         host, err := docker.HostSearchByName(registry.Hostname)
