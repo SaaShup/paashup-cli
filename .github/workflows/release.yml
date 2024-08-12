@@ -12,6 +12,7 @@ jobs:
   release-linux-amd64:
     name: release linux/amd64
     runs-on: ubuntu-latest
+    environment: build
     steps:
     - uses: actions/checkout@v4
     - uses: wangyoucao577/go-release-action@v1
@@ -19,9 +20,11 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: linux
         goarch: amd64
+        ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
   release-linux-arm:
     name: release linux/arm
     runs-on: ubuntu-latest
+    environment: build
     steps:
     - uses: actions/checkout@v4
     - uses: wangyoucao577/go-release-action@v1
@@ -29,9 +32,11 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: linux
         goarch: arm
+        ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
   release-darwin-amd64:
     name: release darwin/amd64
     runs-on: ubuntu-latest
+    environment: build
     steps:
     - uses: actions/checkout@v4
     - uses: wangyoucao577/go-release-action@v1
@@ -39,9 +44,11 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: darwin
         goarch: amd64
+        ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
   release-darwin-arm:
     name: release darwin/arm64
     runs-on: ubuntu-latest
+    environment: build
     steps:
     - uses: actions/checkout@v4
     - uses: wangyoucao577/go-release-action@v1
@@ -49,3 +56,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: darwin
         goarch: arm64
+        ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"

@@ -7,6 +7,28 @@ import (
 )
 
 func main() {
+    platformSubcommands := []*cli.Command{
+        { 
+            Name: "platform",
+            Subcommands: []*cli.Command{
+                {
+                    Name: "account",
+                    Subcommands: []*cli.Command{
+                        {
+                            Name: "create",
+                            Usage: "Create an account\nExample: paashup-cli account create <username> <password>\n",
+                            Action: platformCreateAccount,
+                        },
+                    },
+                },
+                {
+                    Name: "init",
+                    Usage: "Initialize a platform\nExample: paashup-cli platform init\n",
+                    Action: platformInit,
+                },
+            },
+        },
+    }
 	netboxSubcommands := []*cli.Command{
 		{
 			Name: "netbox",
@@ -157,6 +179,7 @@ func main() {
 			},
 		},
 		Commands: []*cli.Command{
+            platformSubcommands[0],
 			dockerSubcommands[0],
 			netboxSubcommands[0],
             stackSubcommands[0],
