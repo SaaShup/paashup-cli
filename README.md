@@ -24,129 +24,276 @@ PROG=paashup-cli source autocompletion.bash
 
 ## Usage
 
+`paashup-cli` provides multiple commands categorized under platforms, Docker resources, Netbox configurations, and stack deployments.
+
 ### Global Flags
 
-- `--format, -f`: Choose between `yaml`, `json`, `json-pretty` (Default: `json`)
+- `--format, -f`: Choose between `yaml`, `json`, or `json-pretty` formats. Default is `json`.
 
-### Commands
+### Commands Overview
 
-#### Netbox
+The CLI is structured with several main commands, each with its own set of subcommands.
 
-The `netbox` command allows you to manage Netbox configurations. It has the following subcommands:
+#### 1. Platform Commands
 
-- **set-config**: Set Netbox configuration.
-  ```sh
+Manage platforms within your paashup environment.
+
+- **Create an Account**
+
+  ```bash
+  paashup-cli platform account create <username> <password>
+  ```
+
+  Creates a new account. Example:
+
+  ```bash
+  paashup-cli platform account create user1 password123
+  ```
+
+- **Initialize a Platform**
+
+  ```bash
+  paashup-cli platform init <username> <password>
+  ```
+
+  Initializes a platform. Example:
+
+  ```bash
+  paashup-cli platform init user1 password123
+  ```
+
+
+#### 2. Netbox Commands
+
+Manage Netbox configurations for your paashup environment.
+
+- **Set Netbox Configuration**
+
+  ```bash
   paashup-cli netbox set-config NAME NETBOX_URL NETBOX_TOKEN
   ```
 
-- **use**: Use a specific Netbox configuration.
-  ```sh
+  Sets a Netbox configuration. Example:
+
+  ```bash
+  paashup-cli netbox set-config myconfig http://netbox.example.com token123
+  ```
+
+- **Use Netbox Configuration**
+
+  ```bash
   paashup-cli netbox use NAME
   ```
 
-#### Docker
+  Selects a Netbox configuration by name. Example:
 
-The `docker` command allows you to manage Docker containers, hosts, and images. It has the following subcommands:
-
-##### Container
-
-- **list**: List all containers, optionally for a specific host.
-  ```sh
-  paashup-cli docker container ls [hostname]
-  ```
-  - Aliases: `ps`, `ls`
-
-- **logs**: Get logs of a container.
-  ```sh
-  paashup-cli docker container logs <hostname> <containername>
-  ```
-
-- **start**: Start a container. Optionally, wait for the container to start.
-  ```sh
-  paashup-cli docker container start [--nowait] <hostname> <containername>
-  ```
-  - `--nowait, -w`: Do not wait for the container to start.
-
-- **stop**: Stop a container. Optionally, wait for the container to stop.
-  ```sh
-  paashup-cli docker container stop [--nowait] <hostname> <containername>
-  ```
-  - `--nowait, -w`: Do not wait for the container to stop.
-
-- **inspect**: Inspect a container.
-  ```sh
-  paashup-cli docker container inspect <hostname> <containername>
-  ```
-
-- **exec**: Execute a command in a container.
-  ```sh
-  paashup-cli docker container exec <hostname> <containername> '<command>'
-  ```
-
-##### Host
-
-- **list**: List all Docker hosts.
-  ```sh
-  paashup-cli docker host list
-  ```
-  - Aliases: `ls`, `ps`
-
-- **inspect**: Inspect a Docker host.
-  ```sh
-  paashup-cli docker host inspect <hostname>
-  ```
-
-##### Image
-
-- **list**: List all Docker images.
-  ```sh
-  paashup-cli docker image list
-  ```
-  - Aliases: `ls`, `ps`
-
-## Examples
-
-Here are a few examples of how to use `paashup-cli`:
-
-- Set a Netbox configuration:
-  ```sh
-  paashup-cli netbox set-config myconfig http://netbox.local mytoken
-  ```
-
-- Use a specific Netbox configuration:
-  ```sh
+  ```bash
   paashup-cli netbox use myconfig
   ```
 
-- List all containers:
-  ```sh
-  paashup-cli docker container ls
+#### 3. Stack Commands
+
+Manage and deploy stacks.
+
+- **Deploy a Stack**
+
+  ```bash
+  paashup-cli stack deploy YAMLFILE
   ```
 
-- Get logs of a container:
-  ```sh
-  paashup-cli docker container logs myhostname mycontainer
+  Deploys a stack from a YAML file. Example:
+
+  ```bash
+  paashup-cli stack deploy stack.yaml
   ```
 
-- Start a container and wait for it to start:
-  ```sh
-  paashup-cli docker container start myhostname mycontainer
-  ```
+#### 4. Docker Commands
 
-- Stop a container without waiting:
-  ```sh
-  paashup-cli docker container stop --nowait myhostname mycontainer
-  ```
+Manage Docker resources including containers, hosts, images, volumes, and registries.
 
-- Inspect a container:
-  ```sh
-  paashup-cli docker container inspect myhostname mycontainer
-  ```
+- **Docker Container Commands**
 
-- Execute a command in a container:
-  ```sh
-  paashup-cli docker container exec myhostname mycontainer 'ls -la'
-  ```
+  - **List Containers**
+
+    ```bash
+    paashup-cli docker container ls [hostname]
+    ```
+
+    Lists all containers. Example:
+
+    ```bash
+    paashup-cli docker container ls myhost
+    ```
+
+  - **Get Logs**
+
+    ```bash
+    paashup-cli docker container logs <hostname> <containername>
+    ```
+
+    Fetches logs for a specific container. Example:
+
+    ```bash
+    paashup-cli docker container logs myhost mycontainer
+    ```
+
+  - **Start a Container**
+
+    ```bash
+    paashup-cli docker container start [--nowait] <hostname> <containername>
+    ```
+
+    Starts a specific container. Example:
+
+    ```bash
+    paashup-cli docker container start --nowait myhost mycontainer
+    ```
+
+  - **Stop a Container**
+
+    ```bash
+    paashup-cli docker container stop [--nowait] <hostname> <containername>
+    ```
+
+    Stops a specific container. Example:
+
+    ```bash
+    paashup-cli docker container stop --nowait myhost mycontainer
+    ```
+
+  - **Inspect a Container**
+
+    ```bash
+    paashup-cli docker container inspect <hostname> <containername>
+    ```
+
+    Inspects a specific container. Example:
+
+    ```bash
+    paashup-cli docker container inspect myhost mycontainer
+    ```
+
+  - **Execute Command in a Container**
+
+    ```bash
+    paashup-cli docker container exec <hostname> <containername> '<command>'
+    ```
+
+    Executes a command within a specific container. Example:
+
+    ```bash
+    paashup-cli docker container exec myhost mycontainer 'ls -la'
+    ```
+
+- **Docker Host Commands**
+
+  - **List Hosts**
+
+    ```bash
+    paashup-cli docker host ls
+    ```
+
+    Lists all hosts. Example:
+
+    ```bash
+    paashup-cli docker host ls
+    ```
+
+  - **Inspect a Host**
+
+    ```bash
+    paashup-cli docker host inspect <hostname>
+    ```
+
+    Inspects a specific host. Example:
+
+    ```bash
+    paashup-cli docker host inspect myhost
+    ```
+
+- **Docker Image Commands**
+
+  - **List Images**
+
+    ```bash
+    paashup-cli docker image ls
+    ```
+
+    Lists all images. Example:
+
+    ```bash
+    paashup-cli docker image ls
+    ```
+
+- **Docker Volume Commands**
+
+  - **List Volumes**
+
+    ```bash
+    paashup-cli docker volume ls
+    ```
+
+    Lists all volumes. Example:
+
+    ```bash
+    paashup-cli docker volume ls
+    ```
+
+- **Docker Registry Commands**
+
+  - **List Registries**
+
+    ```bash
+    paashup-cli docker registry ls
+    ```
+
+    Lists all registries. Example:
+
+    ```bash
+    paashup-cli docker registry ls
+    ```
+
+## Example Workflows
+
+### Set Up a New Environment
+
+1. **Set Netbox Configuration**
+
+   ```bash
+   paashup-cli netbox set-config myconfig http://netbox.example.com token123
+   ```
+
+2. **Initialize a Platform**
+
+   ```bash
+   paashup-cli platform init
+   ```
+
+3. **Deploy a Stack**
+
+   ```bash
+   paashup-cli stack deploy stack.yaml
+   ```
+
+### Manage Docker Containers
+
+1. **List All Containers**
+
+   ```bash
+   paashup-cli docker container ls
+   ```
+
+2. **Start a Container**
+
+   ```bash
+   paashup-cli docker container start --nowait myhost mycontainer
+   ```
+
+3. **Get Logs from a Container**
+
+   ```bash
+   paashup-cli docker container logs myhost mycontainer
+   ```
 
 ## Contributing
 
@@ -154,8 +301,4 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 ## License
 
-`paashup-cli` is released under the BSD 3-Clause License. See the `LICENSE` file for more information.
-
----
-
-This README provides a general overview of `paashup-cli` and how to use it. For more detailed documentation and examples, please refer to the official documentation.
+This project is licensed under the MIT License. See the LICENSE file for details.
