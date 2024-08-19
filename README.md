@@ -2,6 +2,12 @@
 
 `paashup-cli` is a command-line tool for managing your paashup environment, including Docker containers, hosts, images, and Netbox configurations. This tool provides various commands to list, inspect, start, stop, and execute operations on Docker containers, as well as managing Docker hosts, images, and Netbox configurations.
 
+## Build
+using docker:
+```bash
+docker run -it --rm -v ./:/go golang:1.22 go build -buildvcs=false .
+```
+
 ## Installation
 
 To install `paashup-cli`, ensure you have Go installed and run:
