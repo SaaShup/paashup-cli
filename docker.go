@@ -365,6 +365,11 @@ func psContainers(c *cli.Context) error {
 }
 
 func inspectContainer(c *cli.Context) error {
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a host and a container name")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
     config, _ := readConfig(c)
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
@@ -415,6 +420,11 @@ func inspectContainer(c *cli.Context) error {
 }
 
 func execContainer(c *cli.Context) error {
+    if c.Args().Len() != 3 {
+        fmt.Println("Please provide a host, a container name and a command")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
     config, _ := readConfig(c)
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
@@ -445,6 +455,11 @@ func execContainer(c *cli.Context) error {
 }
 
 func stopContainer(c *cli.Context) error {
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a host and a container name")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
     config, _ := readConfig(c)
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
@@ -492,6 +507,11 @@ func stopContainer(c *cli.Context) error {
 }
 
 func startContainer(c *cli.Context) error {
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a host and a container name")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
     config, _ := readConfig(c)
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
@@ -539,6 +559,11 @@ func startContainer(c *cli.Context) error {
 }
 
 func getLogs(c *cli.Context) error {
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a host and a container name")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
     config, _ := readConfig(c)
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token

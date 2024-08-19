@@ -50,7 +50,7 @@ func setConfig(name, url, token string) error {
 }
 
 func useNetboxConfig(c *cli.Context) error {
-	if c.NArg() != 1 {
+	if c.Args().Len() != 1 {
 		return nil
 	}
 	var configpath string
@@ -88,7 +88,7 @@ func readConfig(c *cli.Context) (NetboxConfig, error){
 }
 
 func setNetboxConfig(c *cli.Context) error {
-	if c.NArg() != 3 {
+	if c.Args().Len() != 3 {
 		return cli.ShowCommandHelp(c, "set-config")
 	}
 	name := c.Args().Get(0)

@@ -54,6 +54,11 @@ type stackCompose struct {
 }
 
 func stackDeployRun(c *cli.Context, compose stackCompose) error {
+
+    if c.Args().Len() != 1 {
+        log.Fatal("Please provide a stack file")
+    }
+
     fmt.Println("Deploying stack...")
 
     config, _ := readConfig(c)

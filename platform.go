@@ -11,6 +11,11 @@ import (
 
 func platformCreateAccount(c *cli.Context) error {
 
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide an email and password")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
     // Create a new Supabase client
     client, err := supabase.NewClient(PLATFORM_URL, PLATFORM_PUB_KEY, nil)
 
@@ -35,6 +40,12 @@ func platformCreateAccount(c *cli.Context) error {
 }
 
 func platformInit(c *cli.Context) error {
+
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a username and password")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
     client, err := supabase.NewClient(PLATFORM_URL, PLATFORM_PUB_KEY, nil)
 
     if err != nil {
