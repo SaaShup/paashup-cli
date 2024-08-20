@@ -16,14 +16,14 @@ func main() {
                     Subcommands: []*cli.Command{
                         {
                             Name: "create",
-                            Usage: "Create an account\nExample: paashup-cli account create <username> <password>\n",
+                            Usage: "Create an account\nExample: paashup-cli account create <email> <password>\n",
                             Action: platformCreateAccount,
                         },
                     },
                 },
                 {
                     Name: "init",
-                    Usage: "Initialize a platform\nExample: paashup-cli platform init\n",
+                    Usage: "Initialize a platform\nExample: paashup-cli platform init <email> <password>\n",
                     Action: platformInit,
                 },
             },
