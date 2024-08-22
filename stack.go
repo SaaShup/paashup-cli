@@ -10,7 +10,9 @@ import (
     "github.com/SaaShup/paashup-sdk/netbox"
     "io/ioutil"
     "time"
+    "os"
     "strings"
+    "github.com/sevlyar/go-daemon"
 )
 
 type stackCompose struct {
@@ -303,6 +305,22 @@ func stackDeploy(c *cli.Context) error {
 
     if err != nil {
         log.Fatal(err)
+    }
+
+    if c.Bool("detach") {
+        tmpFile, _ := os.CreateTemp("", "paashup-*.log")
+        fmt.Printf("Output file is %s\nPlease do not close the terminal or shutdown the pc\n", tmpFile.Name())
+        cxt := &daemon.Context{
+            LogFileName: tmpFile.Name(),
+        }
+        child, err := cxt.Reborn()
+        if err != nil {
+            log.Fatal("Unable to run in background")
+        }
+        if child != nil {
+            return nil
+        }
+        defer cxt.Release()
     }
 
     err = stackDeployRun(c, compose)
