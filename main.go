@@ -54,6 +54,13 @@ func main() {
                     Name: "deploy",
                     Usage: "Deploy a stack\nExample: paashup-cli stack deploy YAMLFILE\n",
                     Action: stackDeploy,
+    				Flags: []cli.Flag{
+	    				&cli.BoolFlag{
+		    				Name:    "nowait",
+							Aliases: []string{"w"},
+							Usage:   "Wait for container to start",
+						},
+					},
                 },
             },
         },
@@ -82,9 +89,9 @@ func main() {
 							Action: startContainer,
 							Flags: []cli.Flag{
 								&cli.BoolFlag{
-									Name:    "nowait",
-									Aliases: []string{"w"},
-									Usage:   "Wait for container to start",
+									Name:    "detach",
+									Aliases: []string{"d"},
+									Usage:   "Run job in background",
 								},
 							},
 						},
