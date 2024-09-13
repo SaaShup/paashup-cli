@@ -42,6 +42,25 @@ func platformCreateAccount(c *cli.Context) error {
     return nil
 }
 
+func platformLogout(c *cli.Context) error {
+    var configpath string
+
+    if os.Getenv("XDG_CONFIG_HOME") == "" {
+        configpath = os.Getenv("HOME") + "/.config/paashup-cli/"
+    } else {
+        configpath = os.Getenv("XDG_CONFIG_HOME") + "/paashup-cli/"
+    }
+
+    if _, err := os.Stat(configpath + "platform.token"); os.IsNotExist(err) {
+        log.Fatal("You are not logged in!")
+    }
+
+    os.Remove(configpath + "platform.token")
+
+    fmt.Println("Logged out successfully!")
+    return nil
+}
+
 func platformReadLogin(c *cli.Context) (string, error) {
     var configpath string
 

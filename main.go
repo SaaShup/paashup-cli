@@ -32,6 +32,11 @@ func main() {
                     Action: platformLogin,
                 },
                 {
+                    Name: "logout",
+                    Usage: "Logout from the platform\nExample: paashup-cli platform logout\n",
+                    Action: platformLogout,
+                },
+                {
                     Name: "list",
                     Aliases: []string{"ls", "ps"},
                     Usage: "List all platforms\nExample: paashup-cli platform list\n",
