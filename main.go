@@ -26,6 +26,17 @@ func main() {
                     Usage: "Initialize a platform\nExample: paashup-cli platform init <email> <password>\n",
                     Action: platformInit,
                 },
+                {
+                    Name: "login",
+                    Usage: "Login inside the platform\nExample: paashup-cli platform login <email> <password>\n",
+                    Action: platformLogin,
+                },
+                {
+                    Name: "list",
+                    Aliases: []string{"ls", "ps"},
+                    Usage: "List all platforms\nExample: paashup-cli platform list\n",
+                    Action: platformList,
+                },
             },
         },
     }
