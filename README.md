@@ -5,7 +5,7 @@
 ## Build
 using docker:
 ```bash
-docker run -it --rm -v ./:/go golang:1.22 go build -buildvcs=false .
+docker run -it --rm -v ./:/go golang:1.22 go build -buildvcs=false -ldflags "-X main.version=<VERSION> -X main.PLATFORM_URL=<PLATFORM_URL> -X main.PLATFORM_PUB_KEY=<PUB_KEY>".
 ```
 
 ## Installation
