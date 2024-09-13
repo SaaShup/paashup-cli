@@ -109,7 +109,11 @@ func platformLogin(c *cli.Context) error {
         cli.ShowAppHelpAndExit(c, 1)
     }
     
-    data, _ := client.SignInWithEmailPassword(c.Args().First(),  c.Args().Get(c.Args().Len()-1))
+    data, err := client.SignInWithEmailPassword(c.Args().First(),  c.Args().Get(c.Args().Len()-1))
+
+    if err != nil {
+        log.Fatal("Could not login to the platform!")
+    }
 
     var configpath string
 
