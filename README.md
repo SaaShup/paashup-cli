@@ -56,19 +56,28 @@ Manage platforms within your paashup environment.
   paashup-cli platform account create user1 password123
   ```
 
+- **Login in Platform**
+  ```bash
+  paashup-cli platform login <username> <password>
+  ```
+
 - **Initialize a Platform**
 
   ```bash
-  paashup-cli platform init <username> <password>
+  paashup-cli platform init
   ```
 
   Initializes a platform. Example:
 
   ```bash
-  paashup-cli platform init user1 password123
+  paashup-cli platform init
   ```
 
+- **List Platforms**
 
+  ```bash
+  paashup-cli platform ls
+  ```
 #### 2. Netbox Commands
 
 Manage Netbox configurations for your paashup environment.
