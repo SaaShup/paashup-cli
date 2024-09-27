@@ -7,7 +7,7 @@ import (
     "log"
     "fmt"
     "strings"
-    "github.com/SaaShup/paashup-sdk/netbox"
+    "github.com/SaaShup/paashup-sdk/pkg/netbox"
     "encoding/json"
     "github.com/urfave/cli/v2"
 )

@@ -105,9 +105,9 @@ func main() {
 							Action: startContainer,
 							Flags: []cli.Flag{
 								&cli.BoolFlag{
-									Name:    "detach",
-									Aliases: []string{"d"},
-									Usage:   "Run job in background",
+									Name:    "nowait",
+									Aliases: []string{"w"},
+									Usage:   "Wait for container to start",
 								},
 							},
 						},
@@ -124,6 +124,42 @@ func main() {
 							},
 						},
 						{
+							Name:   "restart",
+							Usage:  "Restart a container\nExample: paashup-cli docker container restart [--nowait] <hostname> <containername>\n",
+							Action: restartContainer,
+							Flags: []cli.Flag{
+								&cli.BoolFlag{
+									Name:    "nowait",
+									Aliases: []string{"w"},
+									Usage:   "Wait for container to start",
+								},
+							},
+						},
+						{
+							Name:   "kill",
+							Usage:  "Kill a container\nExample: paashup-cli docker container kill [--nowait] <hostname> <containername>\n",
+							Action: killContainer,
+							Flags: []cli.Flag{
+								&cli.BoolFlag{
+									Name:    "nowait",
+									Aliases: []string{"w"},
+									Usage:   "Wait for container to stop",
+								},
+							},
+						},
+						{
+							Name:   "recreate",
+							Usage:  "Recreate a container\nExample: paashup-cli docker container recreate [--nowait] <hostname> <containername>\n",
+							Action: recreateContainer,
+							Flags: []cli.Flag{
+								&cli.BoolFlag{
+									Name:    "nowait",
+									Aliases: []string{"w"},
+									Usage:   "Wait for container to start",
+								},
+							},
+						},
+                        {
 							Name:   "inspect",
 							Usage:  "inspect a container\nExample: paashup-cli docker container inspect <hostname> <containername>\n",
 							Action: inspectContainer,

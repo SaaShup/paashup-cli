@@ -7,8 +7,8 @@ import (
 	"github.com/goccy/go-yaml"
 	"github.com/rodaine/table"
 	"github.com/urfave/cli/v2"
-    "github.com/SaaShup/paashup-sdk/docker"
-    "github.com/SaaShup/paashup-sdk/netbox"
+    "github.com/SaaShup/paashup-sdk/pkg/docker"
+    "github.com/SaaShup/paashup-sdk/pkg/netbox"
 	"log"
     "time"
 )
@@ -454,55 +454,94 @@ func execContainer(c *cli.Context) error {
 
 }
 
-func stopContainer(c *cli.Context) error {
-    if c.Args().Len() != 2 {
-        fmt.Println("Please provide a host and a container name")
-        cli.ShowAppHelpAndExit(c, 1)
-    }
-
-    config, _ := readConfig(c)
+func operationContainer(containerName string, hostName string, operation string, wait bool) error{
+    config, _ := readConfig(nil)
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
 
-    host, err := docker.HostSearchByName(c.Args().First())
+    host, err := docker.HostSearchByName(hostName)
     if err != nil {
-        fmt.Println("Host not found")
-        return nil
+        return fmt.Errorf("Host not found")
     }
 
-    container, err := docker.ContainerSearchByName(host, c.Args().Get(c.Args().Len()-1))
+    container, err := docker.ContainerSearchByName(host, containerName)
     if err != nil {
-        fmt.Println("Container not found")
-        return nil
+        return fmt.Errorf("Container not found")
     }
 
-	operationContainer, err := docker.ContainerStop(container)
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	if operationContainer.Operation == "stop" {
-        if !c.Bool("wait") {
+    var operationContainer docker.Container
+    switch operation {
+    case "start":
+        operationContainer, err = docker.ContainerStart(container)
+    case "stop":
+        operationContainer, err = docker.ContainerStop(container)
+    case "restart":
+        operationContainer, err = docker.ContainerRestart(container)
+    case "kill":
+        operationContainer, err = docker.ContainerKill(container)
+    case "recreate":
+        operationContainer, err = docker.ContainerRecreate(container)
+    }
+
+    if err != nil {
+        fmt.Println(err)
+        return nil
+    }
+    if operationContainer.Operation == operation {
+        if !wait {
 		    i := 0
 		    for i < 20 {
                 resultCall, err := docker.ContainerInspect(operationContainer.Id)
 			    if err != nil {
 				    log.Fatal(err)
 			    }
-			    if resultCall.State == "exited" {
-                    break
+                switch operation {
+                case "start":
+                    if resultCall.State == "running" {
+                        break
+                    }
+                case "stop":
+                    if resultCall.State == "exited" {
+                        break
+                    }
+                case "restart":
+                    if resultCall.State == "running" {
+                        break
+                    }
+                case "kill":
+                    if resultCall.State == "exited" {
+                        break
+                    }
+                case "recreate":
+                    if resultCall.State == "running" {
+                        break
+                    }
                 }
+                
 			    time.Sleep(1 * time.Second)
 			    i++
 		    }
 		    return fmt.Errorf("Timeout")
         }
-	
-	} else {
-		fmt.Println("Operation not executed")
-	}
 
-	fmt.Println("Container " + operationContainer.Name + " stopped")
+    } else {
+        fmt.Println("Operation not executed")
+    }
+    return nil
+}
+
+func stopContainer(c *cli.Context) error {
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a host and a container name")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
+    err := operationContainer(c.Args().Get(c.Args().Len()-1), c.Args().First(), "stop", c.Bool("wait"))
+    if err != nil {
+        fmt.Println(err)
+    }
+
+	fmt.Println("Container %s stopped\n", c.Args().Get(c.Args().Len()-1))
 	return nil
 }
 
@@ -512,51 +551,61 @@ func startContainer(c *cli.Context) error {
         cli.ShowAppHelpAndExit(c, 1)
     }
 
-    config, _ := readConfig(c)
-    netbox.NETBOX_URL = config.URL
-    netbox.NETBOX_TOKEN = config.Token
-
-    host, err := docker.HostSearchByName(c.Args().First())
+    err := operationContainer(c.Args().Get(c.Args().Len()-1), c.Args().First(), "stop", c.Bool("wait"))
     if err != nil {
-        fmt.Println("Host not found")
-        return nil
+        fmt.Println(err)
     }
 
-    container, err := docker.ContainerSearchByName(host, c.Args().Get(c.Args().Len()-1))
-    if err != nil {
-        fmt.Println("Container not found")
-        return nil
-    }
-
-	operationContainer, err := docker.ContainerStart(container)
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	if operationContainer.Operation == "start" {
-        if !c.Bool("wait") {
-		    i := 0
-		    for i < 20 {
-                resultCall, err := docker.ContainerInspect(operationContainer.Id)
-			    if err != nil {
-				    log.Fatal(err)
-			    }
-			    if resultCall.State == "running" {
-                    break
-                }
-			    time.Sleep(1 * time.Second)
-			    i++
-		    }
-		    return fmt.Errorf("Timeout")
-        }
-	
-	} else {
-		fmt.Println("Operation not executed")
-	}
-
-	fmt.Println("Container " + operationContainer.Name + " started")
+	fmt.Printf("Container %s started\n", c.Args().Get(c.Args().Len()-1))
 	return nil
 }
+
+func restartContainer(c *cli.Context) error {
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a host and a container name")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
+    err := operationContainer(c.Args().Get(c.Args().Len()-1), c.Args().First(), "restart", c.Bool("wait"))
+    if err != nil {
+        fmt.Println(err)
+    }
+
+	fmt.Printf("Container %s restarted\n", c.Args().Get(c.Args().Len()-1))
+	return nil
+}
+
+func killContainer(c *cli.Context) error {
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a host and a container name")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
+    err := operationContainer(c.Args().Get(c.Args().Len()-1), c.Args().First(), "kill", c.Bool("wait"))
+    if err != nil {
+        fmt.Println(err)
+    }
+
+	fmt.Printf("Container %s killed\n", c.Args().Get(c.Args().Len()-1))
+	return nil
+}
+
+func recreateContainer(c *cli.Context) error {
+    if c.Args().Len() != 2 {
+        fmt.Println("Please provide a host and a container name")
+        cli.ShowAppHelpAndExit(c, 1)
+    }
+
+    err := operationContainer(c.Args().Get(c.Args().Len()-1), c.Args().First(), "recreate", c.Bool("wait"))
+    if err != nil {
+        fmt.Println(err)
+    }
+
+	fmt.Printf("Container %s recreated\n", c.Args().Get(c.Args().Len()-1))
+	return nil
+}
+
+
 
 func getLogs(c *cli.Context) error {
     if c.Args().Len() != 2 {
