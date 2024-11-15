@@ -3,8 +3,7 @@ module paashup.com/paashup-cli
 go 1.22.2
 
 require (
-	github.com/SaaShup/paashup-sdk/docker v0.0.0-20240712131812-729adbe2d893
-	github.com/SaaShup/paashup-sdk/netbox v0.0.0-20240715073752-46b66e225111
+	github.com/SaaShup/paashup-sdk v0.2.0
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
 	github.com/fatih/color v1.17.0
 	github.com/goccy/go-yaml v1.11.3

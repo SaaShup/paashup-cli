@@ -1,3 +1,5 @@
+github.com/SaaShup/paashup-sdk v0.2.0 h1:ju1Z8KlvDXxT4Ow/Vehiphcz7UmGn8tdZ3uWvbVSoc8=
+github.com/SaaShup/paashup-sdk v0.2.0/go.mod h1:3EAeQtGfe34dXFcCtejEHWT/NMOcmH//+qJZHTBULD0=
 github.com/SaaShup/paashup-sdk/docker v0.0.0-20240712131812-729adbe2d893 h1:hh1mqMyb84gIUY+GRgYvf9FF0HarOS8o2CCPbEkcDgA=
 github.com/SaaShup/paashup-sdk/docker v0.0.0-20240712131812-729adbe2d893/go.mod h1:PK6YO8llAwzBcVW8rybApYr9YI5N90csOARlgF/Lv2g=
 github.com/SaaShup/paashup-sdk/netbox v0.0.0-20240715073752-46b66e225111 h1:7mEuxTpC8s+6riQyhWS+0EbW4eGqXED2heWoMIZut5k=
