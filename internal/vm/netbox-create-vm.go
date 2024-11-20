@@ -1,4 +1,4 @@
-package main
+package vm
 
 import (
     "net/http"
@@ -10,6 +10,7 @@ import (
     "github.com/SaaShup/paashup-sdk/pkg/netbox"
     "encoding/json"
     "github.com/urfave/cli/v2"
+    "github.com/SaaShup/paashup-cli/internal/config"
 )
 
 type NetboxVmResponse struct {
@@ -22,8 +23,8 @@ type NetboxVmResponse struct {
     } `json:"primary_ip"`
 }
 
-func findVm(c *cli.Context, name string) (NetboxVmResponse, error) {
-    config, err := readConfig(c) 
+func FindVm(c *cli.Context, name string) (NetboxVmResponse, error) {
+    config, err := config.ReadConfig() 
 	netboxUrl := strings.TrimRight(config.URL, "/")
 
     type FindVM struct {
@@ -60,7 +61,7 @@ func findVm(c *cli.Context, name string) (NetboxVmResponse, error) {
 
 }
 
-func createVm(c *cli.Context, name string) (NetboxVmResponse, error) {
+func CreateVm(c *cli.Context, name string) (NetboxVmResponse, error) {
     type ClusterVM struct {
         Name string `json:"name"`
     }
@@ -72,7 +73,7 @@ func createVm(c *cli.Context, name string) (NetboxVmResponse, error) {
     }
 
     jsonStr, _ := json.Marshal(Vm{Name: name, Status: "planned", Cluster: ClusterVM{ Name: "saashup" }})
-    config, err := readConfig(c)
+    config, err := config.ReadConfig()
 	netboxUrl := strings.TrimRight(config.URL, "/")
 	client := &http.Client{}
 

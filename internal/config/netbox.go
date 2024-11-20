@@ -1,8 +1,7 @@
-package main
+package config
 
 import (
 	"encoding/json"
-	"github.com/urfave/cli/v2"
 	"io/ioutil"
 	"os"
     "fmt"
@@ -14,7 +13,7 @@ type NetboxConfig struct {
 	Token string `json:"token"`
 }
 
-func setConfig(name, url, token string) error {
+func SetConfig(name, url, token string) error {
 	var configpath string
 	var netboxConfig []NetboxConfig
 	if os.Getenv("XDG_CONFIG_HOME") == "" {
@@ -49,24 +48,7 @@ func setConfig(name, url, token string) error {
 	return nil
 }
 
-func useNetboxConfig(c *cli.Context) error {
-	if c.Args().Len() != 1 {
-		return nil
-	}
-	var configpath string
-
-	if os.Getenv("XDG_CONFIG_HOME") == "" {
-		configpath = os.Getenv("HOME") + "/.config/paashup-cli/"
-	} else {
-		configpath = os.Getenv("XDG_CONFIG_HOME") + "/paashup-cli/"
-	}
-
-	_ = ioutil.WriteFile(configpath+"current", []byte(c.Args().First()), 0644)
-	println("Using " + c.Args().First() + " config")
-	return nil
-}
-
-func readConfig(c *cli.Context) (NetboxConfig, error){
+func ReadConfig() (NetboxConfig, error){
 	var configpath string
 	if os.Getenv("XDG_CONFIG_HOME") == "" {
 		configpath = os.Getenv("HOME") + "/.config/paashup-cli/"
@@ -83,17 +65,5 @@ func readConfig(c *cli.Context) (NetboxConfig, error){
             return config, nil
 		}
 	}
-	cli.ShowAppHelpAndExit(c, 1)
     return NetboxConfig{}, nil
 }
-
-func setNetboxConfig(c *cli.Context) error {
-	if c.Args().Len() != 3 {
-		return cli.ShowCommandHelp(c, "set-config")
-	}
-	name := c.Args().Get(0)
-	url := c.Args().Get(1)
-	token := c.Args().Get(2)
-	return setConfig(name, url, token)
-}
-

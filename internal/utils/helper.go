@@ -1,10 +1,10 @@
-package main
+package utils
 
 import (
 	"github.com/mattn/go-runewidth"
     "github.com/acarl005/stripansi"
 )
 
-func calcWidhtColorRed(s string) int {
+func CalcWidhtColorRed(s string) int {
 	return runewidth.StringWidth(stripansi.Strip(s))
 }

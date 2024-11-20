@@ -1,4 +1,4 @@
-module paashup.com/paashup-cli
+module github.com/SaaShup/paashup-cli
 
 go 1.22.2
 
