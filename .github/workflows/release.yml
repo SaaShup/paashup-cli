@@ -2,8 +2,8 @@ name: build_and_release
 
 on:
   push:
-#    tags:
-#      - '*'
+    tags:
+      - '*'
 
 permissions:
   contents: write
