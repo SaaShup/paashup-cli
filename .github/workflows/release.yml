@@ -24,5 +24,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
- #        ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
-        build_command: go build -o build-artifacts-1732109185/paashup-cli -ldflags "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}" ./...
+        project_path: "cmd/paashup-cli"
+        ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
