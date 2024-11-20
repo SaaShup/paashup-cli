@@ -4,6 +4,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
+    "github.com/SaaShup/paashup-cli/internal/utils"
 )
 
 func main() {
@@ -226,7 +227,7 @@ func main() {
 	}
 	app := &cli.App{
 		Name:                 "paashup-cli",
-		Version:              version,
+		Version:              utils.VERSION,
 		Usage:                "Manage your paashup\nTo setup please use first paashup-cli netbox set-config\n",
 		EnableBashCompletion: true,
 		Suggest:              true,

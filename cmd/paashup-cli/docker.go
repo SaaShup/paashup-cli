@@ -9,6 +9,8 @@ import (
 	"github.com/urfave/cli/v2"
     "github.com/SaaShup/paashup-sdk/pkg/docker"
     "github.com/SaaShup/paashup-sdk/pkg/netbox"
+    "github.com/SaaShup/paashup-cli/internal/utils"
+    "github.com/SaaShup/paashup-cli/internal/config"
 	"log"
     "time"
 )
@@ -23,7 +25,7 @@ type listRegistryStruct struct {
 }
 
 func listRegistries(c *cli.Context) error {
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
     
@@ -55,7 +57,7 @@ func listRegistries(c *cli.Context) error {
 		table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
 			return ""
 		}
-		table.DefaultWidthFunc = calcWidhtColorRed
+		table.DefaultWidthFunc = utils.CalcWidhtColorRed
 		var tbl table.Table
 		// Does not allow to disable header.. :(
 		// should we migrate to another table library?
@@ -106,7 +108,7 @@ type listVolumeStruct struct {
 }
 
 func listVolumes(c *cli.Context) error {
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
     
@@ -136,7 +138,7 @@ func listVolumes(c *cli.Context) error {
 		table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
 			return ""
 		}
-		table.DefaultWidthFunc = calcWidhtColorRed
+		table.DefaultWidthFunc = utils.CalcWidhtColorRed
 		var tbl table.Table
 		// Does not allow to disable header.. :(
 		// should we migrate to another table library?
@@ -190,7 +192,7 @@ type listImageStruct struct {
 }
 
 func listImages(c *cli.Context) error {
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
     
@@ -220,7 +222,7 @@ func listImages(c *cli.Context) error {
 		table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
 			return ""
 		}
-		table.DefaultWidthFunc = calcWidhtColorRed
+		table.DefaultWidthFunc = utils.CalcWidhtColorRed
 		var tbl table.Table
 		// Does not allow to disable header.. :(
 		// should we migrate to another table library?
@@ -284,7 +286,7 @@ type listContainerStruct struct {
 
 
 func psContainers(c *cli.Context) error {
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
     
@@ -314,7 +316,7 @@ func psContainers(c *cli.Context) error {
 		table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
 			return ""
 		}
-		table.DefaultWidthFunc = calcWidhtColorRed
+		table.DefaultWidthFunc = utils.CalcWidhtColorRed
 		var tbl table.Table
 		// Does not allow to disable header.. :(
 		// should we migrate to another table library?
@@ -370,7 +372,7 @@ func inspectContainer(c *cli.Context) error {
         cli.ShowAppHelpAndExit(c, 1)
     }
 
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
 
@@ -425,7 +427,7 @@ func execContainer(c *cli.Context) error {
         cli.ShowAppHelpAndExit(c, 1)
     }
 
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
 
@@ -455,7 +457,7 @@ func execContainer(c *cli.Context) error {
 }
 
 func operationContainer(containerName string, hostName string, operation string, wait bool) error{
-    config, _ := readConfig(nil)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
 
@@ -613,7 +615,7 @@ func getLogs(c *cli.Context) error {
         cli.ShowAppHelpAndExit(c, 1)
     }
 
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
 
@@ -652,7 +654,7 @@ type listHostStruct struct {
 }
 
 func listHosts(c *cli.Context) error {
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
 
@@ -666,7 +668,7 @@ func listHosts(c *cli.Context) error {
 		table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
 			return ""
 		}
-		table.DefaultWidthFunc = calcWidhtColorRed
+		table.DefaultWidthFunc = utils.CalcWidhtColorRed
 		var tbl table.Table
 		// Does not allow to disable header.. :(
 		// should we migrate to another table library?
@@ -716,7 +718,7 @@ func listHosts(c *cli.Context) error {
 }
 
 func inspectHost(c *cli.Context) error {
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
 

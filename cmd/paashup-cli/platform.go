@@ -10,6 +10,7 @@ import (
     "io/ioutil"
     "os"
     "net/http"
+    "github.com/SaaShup/paashup-cli/internal/utils"
 )
 
 func platformCreateAccount(c *cli.Context) error {
@@ -20,7 +21,7 @@ func platformCreateAccount(c *cli.Context) error {
     }
 
     // Create a new Supabase client
-    client, err := supabase.NewClient(PLATFORM_URL, PLATFORM_PUB_KEY, nil)
+    client, err := supabase.NewClient(utils.PLATFORM_URL, utils.PLATFORM_PUB_KEY, nil)
 
     if err != nil {
         log.Fatal("Could not connect to platform!")  
@@ -95,7 +96,7 @@ func platformList(c *cli.Context) error {
         log.Fatal("You are not logged in!")
     }
     client := &http.Client{} 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/functions/v1/paashup-list", PLATFORM_URL), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/functions/v1/paashup-list", utils.PLATFORM_URL), nil)
 
 	if err != nil {
 		log.Fatal("could not create request")
@@ -121,7 +122,7 @@ func platformList(c *cli.Context) error {
 }
 
 func platformLogin(c *cli.Context) error {
-    client, _ := supabase.NewClient(PLATFORM_URL, PLATFORM_PUB_KEY, nil)
+    client, _ := supabase.NewClient(utils.PLATFORM_URL, utils.PLATFORM_PUB_KEY, nil)
 
      if c.Args().Len() != 2 {
         fmt.Println("Please provide a username and password")
@@ -163,7 +164,7 @@ func platformInit(c *cli.Context) error {
         log.Fatal("You are not logged in!")
     }
     client := &http.Client{} 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/functions/v1/paashup-init", PLATFORM_URL), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/functions/v1/paashup-init", utils.PLATFORM_URL), nil)
 
 	if err != nil {
 		log.Fatal("could not create request")

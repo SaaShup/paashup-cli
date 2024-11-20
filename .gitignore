@@ -1,5 +1,5 @@
 netbox-vm-agent.yml
-paashup-cli
 test.yml
 pkg
 Taskfile.yml
+bin

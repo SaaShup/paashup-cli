@@ -13,6 +13,8 @@ import (
     "os"
     "strings"
     "github.com/sevlyar/go-daemon"
+    "github.com/SaaShup/paashup-cli/internal/vm"
+    "github.com/SaaShup/paashup-cli/internal/config"
 )
 
 type stackCompose struct {
@@ -63,24 +65,24 @@ func stackDeployRun(c *cli.Context, compose stackCompose) error {
 
     fmt.Println("Deploying stack...")
 
-    config, _ := readConfig(c)
+    config, _ := config.ReadConfig()
     netbox.NETBOX_URL = config.URL
     netbox.NETBOX_TOKEN = config.Token
 
     for name, host := range compose.Host {
         resp, err := docker.HostSearchByName(name)
-        var vmResponseCreate NetboxVmResponse 
+        var vmResponseCreate vm.NetboxVmResponse 
         if err != nil {
-            vmResponseCreate, err = findVm(c, name)
+            vmResponseCreate, err = vm.FindVm(c, name)
 
             if err != nil {
                 fmt.Printf("Creating vm %s\n", name)
-                vmResponseCreate, err = createVm(c, name)
+                vmResponseCreate, err = vm.CreateVm(c, name)
                 if err != nil {
                     log.Fatal(fmt.Sprintf("Failed to create host %s", name))
                 }
                 for i := 0; i < 30; i++ {
-                    vmResponseCreate, err = findVm(c, name)
+                    vmResponseCreate, err = vm.FindVm(c, name)
                     if err != nil {
                         log.Fatal("Could not create VM")
                     }
