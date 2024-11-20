@@ -28,6 +28,14 @@ PROG=paashup-cli source autocompletion.bash
 
 ```
 
+## Documentation Generation
+For Stack jsonschema generation, you can use the following command:
+```sh
+
+paashup-cli doc jsonschema 
+
+```
+
 ## Usage
 
 `paashup-cli` provides multiple commands categorized under platforms, Docker resources, Netbox configurations, and stack deployments.
