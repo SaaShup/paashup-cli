@@ -25,4 +25,4 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         project_path: "cmd/paashup-cli"
-        ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
+        ldflags: "-X github.com/SaaShup/paashup-cli/internal/utils.version=${{ github.ref }} -X github.com/SaaShup/paashup-cli/internal/utils.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X github.com/SaaShup/paashup-cli/internal/utils.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
