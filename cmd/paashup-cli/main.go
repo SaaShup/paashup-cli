@@ -7,7 +7,7 @@ import (
     "github.com/SaaShup/paashup-cli/internal/utils"
 )
 
-func main() {
+func Execute() {
     platformSubcommands := []*cli.Command{
         { 
             Name: "platform",
