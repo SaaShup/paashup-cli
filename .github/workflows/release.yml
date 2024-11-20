@@ -9,9 +9,13 @@ permissions:
   contents: write
 
 jobs:
-  release-linux-amd64:
+  releases:
     name: release linux/amd64
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin]
+        goarch: [amd64, arm64]
     environment: build
     steps:
     - uses: actions/checkout@v4
@@ -20,40 +24,6 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: linux
         goarch: amd64
-        build_flags: "-ldflags '-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}'  ./..."
-  release-linux-arm:
-    name: release linux/arm
-    runs-on: ubuntu-latest
-    environment: build
-    steps:
-    - uses: actions/checkout@v4
-    - uses: wangyoucao577/go-release-action@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: linux
-        goarch: arm
-        build_flags: "-ldflags '-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}'  ./..."
-  release-darwin-amd64:
-    name: release darwin/amd64
-    runs-on: ubuntu-latest
-    environment: build
-    steps:
-    - uses: actions/checkout@v4
-    - uses: wangyoucao577/go-release-action@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: darwin
-        goarch: amd64
-        build_flags: "-ldflags '-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}'  ./..."
-  release-darwin-arm:
-    name: release darwin/arm64
-    runs-on: ubuntu-latest
-    environment: build
-    steps:
-    - uses: actions/checkout@v4
-    - uses: wangyoucao577/go-release-action@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: darwin
-        goarch: arm64
-        build_flags: "-ldflags '-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}'  ./..."
+        pre_command: go get -v -t -d ./... 
+        ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
+
