@@ -20,7 +20,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: linux
         goarch: amd64
-        project_path: "./..."
+        build_flags: "./..."
         ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
   release-linux-arm:
     name: release linux/arm
@@ -33,7 +33,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: linux
         goarch: arm
-        project_path: "./..."
+        build_flags: "./..."
         ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
   release-darwin-amd64:
     name: release darwin/amd64
@@ -46,7 +46,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: darwin
         goarch: amd64
-        project_path: "./..."
+        build_flags: "./..."
         ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
   release-darwin-arm:
     name: release darwin/arm64
@@ -59,5 +59,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: darwin
         goarch: arm64
-        project_path: "./..."
+        build_flags: "./..."
         ldflags: "-X main.version=${{ github.ref }} -X main.PLATFORM_URL=${{ vars.PLATFORM_URL }} -X main.PLATFORM_PUB_KEY=${{ vars.PLATFORM_PUB_KEY}}"
