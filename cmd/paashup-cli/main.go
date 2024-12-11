@@ -3,11 +3,30 @@ package main
 import (
 	"github.com/urfave/cli/v2"
 	"log"
+    "fmt"
 	"os"
     "github.com/SaaShup/paashup-cli/internal/utils"
+    "github.com/invopop/jsonschema"
+    "encoding/json"
 )
 
 func main() {
+    generateDoc := []*cli.Command{
+        {
+            Name: "doc",
+            Subcommands: []*cli.Command{
+                {
+                    Name: "jsonschema",
+                    Usage: "Generate JSON Schema\nExample: paashup-cli doc jsonschema\n",
+                    Action: func(c *cli.Context) error {
+                        resp, _ := json.Marshal(jsonschema.Reflect(&stackCompose{}))
+                        fmt.Printf("%s\n", resp)
+                        return nil
+                    },
+                },
+            },
+        },
+    }
     platformSubcommands := []*cli.Command{
         { 
             Name: "platform",
@@ -243,6 +262,7 @@ func main() {
 			dockerSubcommands[0],
 			netboxSubcommands[0],
             stackSubcommands[0],
+            generateDoc[0],
 		},
 	}
 
